@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/product_info.dart';
+import 'package:quick_drop/screen/home/item_bottom_modal.dart';
+import '../../services/product_info_api.dart';
 
 class ItemList extends StatefulWidget {
   const ItemList({super.key});
@@ -14,7 +15,7 @@ class _ItemListState extends State<ItemList> {
   @override
   void initState() {
     super.initState();
-    _productInfoList = ItemListApi.fetchItemList();
+    _productInfoList = ItemListApi.fetchData();
   }
 
   @override
@@ -29,10 +30,24 @@ class _ItemListState extends State<ItemList> {
               itemCount: productInfoList.length,
               itemBuilder: (context, index) {
                 final productInfo = productInfoList[index];
-                return ListTile(
-                  title: Text(productInfo.name),
-                  subtitle: Text(productInfo.description),
-                  trailing: Text(productInfo.address),
+                return InkWell(
+                  onTap: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return Container(
+                            height: MediaQuery.of(context).size.height * 0.8,
+                            color: Colors.white,
+                            child: const ItemBottomModal());
+                      },
+                    );
+                  },
+                  child: ListTile(
+                    title: Text(productInfo.name),
+                    subtitle: Text(productInfo.address),
+                    trailing: const Icon(Icons.arrow_forward),
+                  ),
                 );
               },
             );
