@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quick_drop/screen/home/item_bottom_modal.dart';
+import 'item_bottom_modal.dart';
 import '../../services/product_info_api.dart';
 
 class ItemList extends StatefulWidget {
