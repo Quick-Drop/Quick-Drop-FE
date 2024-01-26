@@ -97,7 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          // Donation Process로 이동
+        },
         backgroundColor: Colors.purple,
         child: const Icon(Icons.add),
       ),
