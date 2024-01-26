@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class ProductInfo {
+class ProductInfo with ChangeNotifier {
   final int id;
   final String name;
   final String title;
@@ -34,8 +35,8 @@ class ProductInfo {
   }
 }
 
-class ItemListApi {
-  static Future<List<ProductInfo>> fetchItemList() async {
+class ItemListApi with ChangeNotifier {
+  static Future<List<ProductInfo>> fetchData() async {
     final response = await http.get(Uri.parse(
         'https://c0d37d40-3638-49a9-942b-3fb838191686.mock.pstmn.io/list'));
 
