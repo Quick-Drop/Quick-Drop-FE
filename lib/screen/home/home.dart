@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:quick_drop/screen/home/category.dart';
-import 'package:quick_drop/screen/home/chat.dart';
-import 'package:quick_drop/screen/home/item_list.dart';
-import 'package:quick_drop/screen/home/my_page.dart';
+import 'category.dart';
+import 'chat.dart';
+import 'item_list.dart';
+import 'my_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
