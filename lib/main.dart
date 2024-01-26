@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quick_drop/services/product_info_api.dart';
+import 'services/product_info_api.dart';
 import 'screen/home/home.dart';
 
 void main() {

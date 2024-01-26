@@ -35,11 +35,18 @@ class _ItemListState extends State<ItemList> {
                     showModalBottomSheet<void>(
                       context: context,
                       isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
                       builder: (context) {
                         return Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(25.0), // 적절히 조절
+                                topRight: Radius.circular(25.0),
+                              ),
+                            ),
                             height: MediaQuery.of(context).size.height * 0.8,
-                            color: Colors.white,
-                            child: const ItemBottomModal());
+                            child: ItemBottomModal(productInfo: productInfo));
                       },
                     );
                   },
