@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'myAccount.dart';
+import 'address.dart';
+import 'donationHistory.dart';
+import 'helpCenter.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
@@ -9,7 +13,6 @@ class Profile extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.only(left: 24, right: 24),
         children: <Widget>[
-          // logoutButton(context),
           const ProfileHeader(),
           ProfileListItem(
             title: 'My Account',
@@ -36,18 +39,16 @@ class Profile extends StatelessWidget {
             title: 'Help Center',
             iconData: Icons.help_outline,
             onTap: () {
-              Navigator.pushNamed(context, '/helpCenter');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HelpCenter()),
+              );
             },
           ),
         ],
       ),
     );
   }
-
-  // Widget myAccount() {}
-  // Widget address() {}
-  // Widget donationHistory() {}
-  // Widget helpCenter() {}
 }
 
 class ProfileListItem extends StatelessWidget {
@@ -126,7 +127,10 @@ class ProfileHeader extends StatelessWidget {
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Logout', style: TextStyle(fontSize: 18)),
+                  Text(
+                    'Logout',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(height: 16),
                   Text('Are you sure you want to log out?',
                       style: TextStyle(fontSize: 16)),
