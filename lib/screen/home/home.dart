@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'donation/donation_upload.dart';
+import 'search.dart';
 import 'category.dart';
 import 'chat.dart';
 import 'item_list.dart';
@@ -52,7 +54,16 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.search,
               color: Colors.black,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const SearchScreen();
+                  },
+                ),
+              );
+            },
           ),
         ],
         backgroundColor: Colors.white,
@@ -98,7 +109,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Donation Process로 이동
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const DonationUpload();
+              },
+            ),
+          );
         },
         backgroundColor: Colors.purple,
         child: const Icon(Icons.add),

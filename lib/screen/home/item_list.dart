@@ -41,11 +41,11 @@ class _ItemListState extends State<ItemList> {
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(25.0), // 적절히 조절
+                                topLeft: Radius.circular(25.0),
                                 topRight: Radius.circular(25.0),
                               ),
                             ),
-                            height: MediaQuery.of(context).size.height * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.77,
                             child: ItemBottomModal(productInfo: productInfo));
                       },
                     );
