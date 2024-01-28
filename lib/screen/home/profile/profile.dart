@@ -18,7 +18,10 @@ class Profile extends StatelessWidget {
             title: 'My Account',
             iconData: Icons.person_outline,
             onTap: () {
-              Navigator.pushNamed(context, '/myAccount');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyAccount()),
+              );
             },
           ),
           ProfileListItem(
@@ -101,6 +104,9 @@ class ProfileHeader extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => showLogoutDialog(context),
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xffEF5A56),
+            ),
             child: const Text('Logout'),
           ),
         ],
@@ -137,12 +143,12 @@ class ProfileHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              TextButton(
+              ElevatedButton(
                 child: const Text('Logout'),
                 onPressed: () => {},
               ),
               const SizedBox(height: 16),
-              TextButton(
+              ElevatedButton(
                 child: const Text('Cancel'),
                 onPressed: () => Navigator.pop(context),
               ),
