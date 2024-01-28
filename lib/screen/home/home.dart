@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'category.dart';
 import 'chat.dart';
 import 'item_list.dart';
-import 'my_page.dart';
+import 'profile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ItemList(),
     Category(),
     Chat(),
-    MyPage(),
+    Profile(),
   ];
 
   void _onItemTapped(int index) {
@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.account_circle,
               color: Colors.grey,
             ),
-            label: 'MyPage',
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,
