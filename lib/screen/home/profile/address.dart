@@ -26,11 +26,11 @@ class _AddressState extends State<Address> {
         centerTitle: true,
         leading: const BackButton(color: Colors.black),
       ),
-      body: ListView(
+      body: Column(
         children: [
           Container(
               margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-              width: 327, //얘 왜 적용안됨 하...
+              width: 327,
               height: 223,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
