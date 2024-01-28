@@ -28,14 +28,21 @@ class Profile extends StatelessWidget {
             title: 'Address',
             iconData: Icons.location_on_outlined,
             onTap: () {
-              Navigator.pushNamed(context, '/address');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Address()),
+              );
             },
           ),
           ProfileListItem(
             title: 'Donation History',
             iconData: Icons.favorite_outline,
             onTap: () {
-              Navigator.pushNamed(context, '/donationHistory');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const DonationHistory()),
+              );
             },
           ),
           ProfileListItem(
