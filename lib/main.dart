@@ -13,8 +13,28 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ItemListApi(),
-      child: const MaterialApp(
-        home: Scaffold(
+      child: MaterialApp(
+        theme: ThemeData(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+                elevation: 0,
+                shape: const StadiumBorder(),
+                minimumSize: const Size(327, 48),
+                backgroundColor: const Color(0xff54408C),
+                textStyle:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xff54408C),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        home: const Scaffold(
           body: HomeScreen(),
         ),
       ),
