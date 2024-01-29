@@ -5,7 +5,8 @@ class Chat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Text("Chat"),
+      body: Center(
+          child: Text("The chat service is being prepared! Please Wait!😀")),
     );
   }
 }

@@ -23,6 +23,12 @@ class _HomeScreenState extends State<HomeScreen> {
     Chat(),
     Profile(),
   ];
+  static const _appBarTitles = <String>[
+    'Home',
+    'Category',
+    'Chat',
+    'Profile',
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -30,14 +36,21 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _navigateToScreen(Widget screen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => screen,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          (_selectedIndex == 0
-              ? "Home"
-              : _widgetOptions.elementAt(_selectedIndex).toString()),
+          _appBarTitles[_selectedIndex],
           style: const TextStyle(color: Colors.black),
         ),
         centerTitle: true,
@@ -75,49 +88,22 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Colors.grey,
-            ),
-            label: 'Home',
-          ),
+              icon: Icon(Icons.home, color: Colors.grey), label: 'Home'),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.category,
-              color: Colors.grey,
-            ),
-            label: 'Category',
-          ),
+              icon: Icon(Icons.category, color: Colors.grey),
+              label: 'Category'),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.chat,
-              color: Colors.grey,
-            ),
-            label: 'Chat',
-          ),
+              icon: Icon(Icons.chat, color: Colors.grey), label: 'Chat'),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.account_circle,
-              color: Colors.grey,
-            ),
-            label: 'Profile',
-          ),
+              icon: Icon(Icons.account_circle, color: Colors.grey),
+              label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.grey[800],
         onTap: _onItemTapped,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return const DonationUpload();
-              },
-            ),
-          );
-        },
+        onPressed: () => _navigateToScreen(const DonationUpload()),
         backgroundColor: Colors.purple,
         child: const Icon(Icons.add),
       ),
