@@ -7,6 +7,9 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  static const paddingValue = 16.0;
+  static const suggestionCount = 4;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,35 +35,10 @@ class _SearchScreenState extends State<SearchScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SearchAnchor(
-                isFullScreen: false,
-                builder: (context, controller) {
-                  return SearchBar(
-                    controller: controller,
-                    padding: const MaterialStatePropertyAll<EdgeInsets>(
-                        EdgeInsets.symmetric(horizontal: 16.0)),
-                    onTap: () {
-                      controller.openView();
-                    },
-                    onChanged: (_) {
-                      controller.openView();
-                    },
-                    leading: const Icon(Icons.search),
-                  );
-                },
-                suggestionsBuilder:
-                    (BuildContext context, SearchController controller) {
-                  return List<ListTile>.generate(4, (int index) {
-                    final String item = 'item $index';
-                    return ListTile(
-                      title: Text(item),
-                      onTap: () {
-                        setState(() {
-                          controller.closeView(item);
-                        });
-                      },
-                    );
-                  });
-                }),
+              isFullScreen: false,
+              builder: _buildSearchBar,
+              suggestionsBuilder: _buildSuggestions,
+            ),
           ),
           const SizedBox(height: 20),
           const Text(
@@ -73,5 +51,35 @@ class _SearchScreenState extends State<SearchScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildSearchBar(BuildContext context, SearchController controller) {
+    return SearchBar(
+      controller: controller,
+      padding: const MaterialStatePropertyAll<EdgeInsets>(
+          EdgeInsets.symmetric(horizontal: paddingValue)),
+      onTap: () {
+        controller.openView();
+      },
+      onChanged: (_) {
+        controller.openView();
+      },
+      leading: const Icon(Icons.search),
+    );
+  }
+
+  Iterable<Widget> _buildSuggestions(
+      BuildContext context, SearchController controller) {
+    return List<ListTile>.generate(suggestionCount, (int index) {
+      final String item = 'item $index';
+      return ListTile(
+        title: Text(item),
+        onTap: () {
+          setState(() {
+            controller.closeView(item);
+          });
+        },
+      );
+    });
   }
 }
