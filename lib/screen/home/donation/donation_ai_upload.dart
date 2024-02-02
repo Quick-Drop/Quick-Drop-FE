@@ -144,7 +144,7 @@ class AiUploadScreen extends StatelessWidget {
                   onPressed: () {
                     // chat으로 이동
                   },
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -152,7 +152,7 @@ class AiUploadScreen extends StatelessWidget {
                   onPressed: () {
                     // chat으로 이동
                   },
-                  child: Text('Save'),
+                  child: const Text('Save'),
                 ),
               ],
             ),
