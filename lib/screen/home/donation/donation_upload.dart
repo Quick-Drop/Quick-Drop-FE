@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quick_drop/screen/home/donation/donation_ai_upload.dart';
 import '../search.dart';
 
 class DonationUpload extends StatelessWidget {
@@ -174,7 +175,7 @@ class DonationUpload extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Product Title',
+                          'Product Info',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -354,7 +355,24 @@ class DonationUpload extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                //Upload Modal sheet
+                showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) {
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25.0),
+                          topRight: Radius.circular(25.0),
+                        ),
+                      ),
+                      height: MediaQuery.of(context).size.height * 0.88,
+                      child: AiUploadScreen(),
+                    );
+                  },
+                );
               },
               child: const Text('Upload'),
             )
