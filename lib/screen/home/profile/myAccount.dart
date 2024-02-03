@@ -85,14 +85,10 @@ class MyAccount extends StatelessWidget {
             borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(8.0),
           ),
-          contentPadding: const EdgeInsets.symmetric(
-              vertical: 0, horizontal: 15), // Padding inside the text field
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
         ),
-        style: const TextStyle(
-            fontSize: 16.0,
-            fontWeight:
-                FontWeight.w600 // The size of the text inside the text field
-            ),
+        style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
       ),
     ]);
   }
