@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/product_info_api.dart';
-import 'screen/home/home.dart';
+import 'onboarding.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,6 +9,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -34,9 +35,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: const Scaffold(
-          body: HomeScreen(),
-        ),
+        home: const OnBoarding(),
       ),
     );
   }
