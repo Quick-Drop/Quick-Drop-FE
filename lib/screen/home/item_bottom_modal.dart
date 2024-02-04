@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../services/product_info_api.dart';
+import '../../services/product_list_api.dart';
 
 class ItemBottomModal extends StatefulWidget {
   final ProductInfo productInfo;

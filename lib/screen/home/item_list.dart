@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'item_bottom_modal.dart';
-import '../../services/product_info_api.dart';
+import '../../services/product_list_api.dart';
 
 class ItemList extends StatefulWidget {
   const ItemList({super.key});
