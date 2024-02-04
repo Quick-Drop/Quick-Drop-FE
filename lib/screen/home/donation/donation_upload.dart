@@ -1,9 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:quick_drop/screen/home/donation/donation_ai_upload.dart';
+import 'donation_ai_upload.dart';
 import '../search.dart';
 
-class DonationUpload extends StatelessWidget {
+class DonationUpload extends StatefulWidget {
   const DonationUpload({super.key});
+
+  @override
+  State<DonationUpload> createState() => _DonationUploadState();
+}
+
+class _DonationUploadState extends State<DonationUpload> {
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  bool _isEditingAll = false;
+
+  Map<String, dynamic> productInfo = {
+    'Product Title': {
+      'controller': TextEditingController(),
+      'isEditing': false,
+    },
+    'Product description': {
+      'controller': TextEditingController(),
+      'isEditing': false,
+    },
+  };
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,18 +72,20 @@ class DonationUpload extends StatelessWidget {
               },
             ),
           ]),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            buildProductInfoContainer(),
-            const SizedBox(height: 16),
-            buildProductDetailsContainer(),
-            const SizedBox(height: 16),
-            buildWayAndDateToDonateContainer(),
-            const SizedBox(height: 16),
-            buildUploadButton(context),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              buildProductInfoContainer(),
+              const SizedBox(height: 16),
+              buildProductDetailsContainer(),
+              const SizedBox(height: 16),
+              buildWayAndDateToDonateContainer(),
+              const SizedBox(height: 16),
+              buildUploadButton(context),
+            ],
+          ),
         ),
       ),
     );
@@ -67,104 +99,106 @@ class DonationUpload extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       width: 327,
       height: 161,
       child: Column(
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
+          SizedBox(
+            width: 295,
+            height: 31,
             child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Product Title',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontFamily: 'Open Sans',
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.54,
-                  ),
+                  'Prodcut Title',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 IconButton(
-                  onPressed: () {
-                    // edit upload description
-                  },
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
                   icon: const Icon(
                     Icons.mode,
-                    color: Color(0xff54408C),
-                    size: 18,
+                    size: 16,
+                    color: Color(0xFF54408C),
                   ),
-                )
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    setState(() {
+                      _isEditingAll = !_isEditingAll;
+                      productInfo.forEach((key, value) {
+                        value['isEditing'] = _isEditingAll;
+                      });
+                    });
+                  },
+                ),
               ],
             ),
           ),
-          const SizedBox(
-            height: 8,
-          ),
-          Align(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  color: Colors.black,
-                  child: const SizedBox(
-                    // instead of Image, ImagePicker will be here
-                    width: 70,
-                    height: 68,
-                  ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                color: Colors.black,
+                child: const SizedBox(
+                  // Image will be set
+                  height: 80,
+                  width: 80,
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 40,
-                      child: Text(
-                        'book shelves stand black',
-                        style: TextStyle(
-                          color: Color(0xFF121212),
-                          fontSize: 16,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w600,
-                          height: 0.09,
-                        ),
-                      ),
+                    SizedBox(
+                      width: 181,
+                      height: 24,
+                      child: productInfo['Product Title']['isEditing']
+                          ? TextFormField(
+                              controller: productInfo['Product Title']
+                                  ['controller'],
+                              decoration: const InputDecoration(
+                                hintText: "Ex.AirPod 2th Gen",
+                                hintStyle:
+                                    TextStyle(fontWeight: FontWeight.bold),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            )
+                          : Text(
+                              productInfo['Product Title']['controller'].text,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
                     ),
                     SizedBox(
-                      width: 200,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: RichText(
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              text: const TextSpan(
-                                text: 'This is a small book stand',
-                                style: TextStyle(
-                                  color: Color(0xFFA5A5A5),
-                                  fontSize: 14,
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0.10,
-                                ),
+                      width: 212,
+                      height: 80,
+                      child: productInfo['Product description']['isEditing']
+                          ? TextFormField(
+                              maxLines: null,
+                              controller: productInfo['Product description']
+                                  ['controller'],
+                              decoration: const InputDecoration(
+                                hintText:
+                                    "This is small book stand blah made in Republic of Korea blah",
+                                hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    overflow: TextOverflow.visible),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
                               ),
+                            )
+                          : Text(
+                              productInfo['Product description']['controller']
+                                  .text,
+                              style: const TextStyle(
+                                  fontSize: 14, overflow: TextOverflow.visible),
                             ),
-                          )
-                        ],
-                      ),
-                    )
+                    ),
                   ],
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ],
       ),
@@ -183,71 +217,130 @@ class DonationUpload extends StatelessWidget {
           ),
         ),
         padding: const EdgeInsets.all(16),
-        child: Column(children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Product Info',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontFamily: 'Open Sans',
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.54,
-                  ),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Product Info',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: 'Open Sans',
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.54,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        // edit upload description
+                      },
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      icon: const Icon(
+                        Icons.mode,
+                        color: Color(0xff54408C),
+                        size: 18,
+                      ),
+                    ),
+                  ],
                 ),
-                IconButton(
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Name of Brand'),
+                  SizedBox(
+                    width: 70,
+                    height: 20,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "Ex.Apple",
+                        hintStyle: TextStyle(fontSize: 14),
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Date of Manufacture'),
+                  SizedBox(
+                    width: 70,
+                    height: 20,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "2023.11.11",
+                        hintStyle: TextStyle(fontSize: 14),
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('color'),
+                  SizedBox(
+                    width: 70,
+                    height: 20,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "Ex.black",
+                        hintStyle: TextStyle(fontSize: 14),
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('category'),
+                  SizedBox(
+                    width: 70,
+                    height: 20,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "Ex.Electronics",
+                        hintStyle: TextStyle(fontSize: 14),
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                height: 64,
+                alignment: Alignment.bottomLeft,
+                child: TextButton.icon(
                   onPressed: () {
-                    // edit upload description
+                    // See more Details
                   },
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  icon: const Icon(
-                    Icons.mode,
-                    color: Color(0xff54408C),
-                    size: 18,
-                  ),
+                  label: const Text('See more Details'),
+                  icon: const Icon(Icons.chevron_right),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('Name of Brand'), Text('Han-ssem')],
-          ),
-          const SizedBox(height: 8),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('Date of Manufacture'), Text('2023-11-11')],
-          ),
-          const SizedBox(height: 8),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('Color'), Text('black')],
-          ),
-          const SizedBox(height: 8),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('category'), Text('Furniture')],
-          ),
-          Container(
-            height: 64,
-            alignment: Alignment.bottomLeft,
-            child: TextButton.icon(
-              onPressed: () {
-                // See more Details
-              },
-              label: const Text('See more Details'),
-              icon: const Icon(Icons.chevron_right),
-            ),
-          ),
-        ]),
+              ),
+            ]),
       ),
     );
   }
