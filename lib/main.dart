@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'services/product_info_api.dart';
+import 'services/product_list_api.dart';
 import 'onboarding.dart';
 
 void main() {
