@@ -191,7 +191,7 @@ class _DonationUploadState extends State<DonationUpload> {
                         height: 24,
                         child: productInfo['Product Title']['isEditing']
                             ? TextFormField(
-                                key: ValueKey(1),
+                                key: const ValueKey(1),
                                 controller: productInfo['Product Title']
                                     ['controller'],
                                 decoration: const InputDecoration(
@@ -213,7 +213,7 @@ class _DonationUploadState extends State<DonationUpload> {
                         height: 80,
                         child: productInfo['Product description']['isEditing']
                             ? TextFormField(
-                                key: ValueKey(2),
+                                key: const ValueKey(2),
                                 maxLines: null,
                                 controller: productInfo['Product description']
                                     ['controller'],
@@ -385,6 +385,7 @@ class _DonationUploadState extends State<DonationUpload> {
                   width: 195,
                   height: 44,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'How to Donate',
@@ -395,6 +396,7 @@ class _DonationUploadState extends State<DonationUpload> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      SizedBox(height: 4),
                       Text(
                         'prefer the way in person',
                         style: TextStyle(
@@ -429,9 +431,10 @@ class _DonationUploadState extends State<DonationUpload> {
                   width: 195,
                   height: 44,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'How to Donate',
+                        'Date & Time',
                         style: TextStyle(
                           color: Color(0xFF121212),
                           fontSize: 14,
@@ -439,8 +442,9 @@ class _DonationUploadState extends State<DonationUpload> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      SizedBox(height: 4),
                       Text(
-                        'prefer the way in person',
+                        "let's arrange in a chat",
                         style: TextStyle(
                           color: Color(0xFF7A7A7A),
                           fontSize: 14,
