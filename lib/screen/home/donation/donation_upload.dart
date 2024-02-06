@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'donation_ai_upload.dart';
+import 'image_input.dart';
+// import 'donation_ai_upload.dart';
 import '../search.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,7 +15,7 @@ class DonationUpload extends StatefulWidget {
 
 class _DonationUploadState extends State<DonationUpload> {
   final formKey = GlobalKey<FormState>();
-
+  File? _pickedImage;
   bool _isEditingAll = false;
   final brandNameController = TextEditingController();
   final dateOfManufactureController = TextEditingController();
@@ -23,11 +25,11 @@ class _DonationUploadState extends State<DonationUpload> {
   Map<String, dynamic> productInfo = {
     'Product Title': {
       'controller': TextEditingController(),
-      'isEditing': false,
+      'isEditing': true,
     },
     'Product description': {
       'controller': TextEditingController(),
-      'isEditing': false,
+      'isEditing': true,
     },
   };
 
@@ -60,6 +62,18 @@ class _DonationUploadState extends State<DonationUpload> {
     }
   }
 
+  void _navigateToScreen(Widget screen) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => screen),
+    );
+    if (result != null && result is File) {
+      setState(() {
+        _pickedImage = result;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +81,11 @@ class _DonationUploadState extends State<DonationUpload> {
 
   @override
   void dispose() {
+    brandNameController.dispose();
+    dateOfManufactureController.dispose();
+    colorController.dispose();
+    categoryController.dispose();
+
     super.dispose();
   }
 
@@ -172,11 +191,23 @@ class _DonationUploadState extends State<DonationUpload> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
-                color: Colors.black,
-                child: const SizedBox(
-                  // Image will be set
+                child: SizedBox(
                   height: 80,
                   width: 80,
+                  // need to show image
+                  child: _pickedImage == null
+                      ? IconButton(
+                          onPressed: () => _navigateToScreen(
+                            ImageInput(
+                              onSelectImage: (File pickedImage) {
+                                Navigator.pop(
+                                    context, pickedImage); // 선택한 사진을 결과로 반환
+                              },
+                            ),
+                          ),
+                          icon: const Icon(Icons.camera),
+                        )
+                      : Image.file(_pickedImage!),
                 ),
               ),
               Padding(
