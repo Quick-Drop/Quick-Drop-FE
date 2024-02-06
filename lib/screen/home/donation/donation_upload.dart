@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:quick_drop/screen/home/donation/image_input.dart';
-import 'donation_ai_upload.dart';
+import 'image_input.dart';
+// import 'donation_ai_upload.dart';
 import '../search.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,7 +15,7 @@ class DonationUpload extends StatefulWidget {
 
 class _DonationUploadState extends State<DonationUpload> {
   final formKey = GlobalKey<FormState>();
-
+  File? _pickedImage;
   bool _isEditingAll = false;
   final brandNameController = TextEditingController();
   final dateOfManufactureController = TextEditingController();
@@ -63,13 +62,16 @@ class _DonationUploadState extends State<DonationUpload> {
     }
   }
 
-  void _navigateToScreen(Widget screen) {
-    Navigator.push(
+  void _navigateToScreen(Widget screen) async {
+    final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => screen,
-      ),
+      MaterialPageRoute(builder: (context) => screen),
     );
+    if (result != null && result is File) {
+      setState(() {
+        _pickedImage = result;
+      });
+    }
   }
 
   @override
@@ -192,9 +194,20 @@ class _DonationUploadState extends State<DonationUpload> {
                 child: SizedBox(
                   height: 80,
                   width: 80,
-                  child: IconButton(
-                      onPressed: () => _navigateToScreen(const IamgeInput()),
-                      icon: const Icon(Icons.camera)),
+                  // need to show image
+                  child: _pickedImage == null
+                      ? IconButton(
+                          onPressed: () => _navigateToScreen(
+                            ImageInput(
+                              onSelectImage: (File pickedImage) {
+                                Navigator.pop(
+                                    context, pickedImage); // 선택한 사진을 결과로 반환
+                              },
+                            ),
+                          ),
+                          icon: const Icon(Icons.camera),
+                        )
+                      : Image.file(_pickedImage!),
                 ),
               ),
               Padding(

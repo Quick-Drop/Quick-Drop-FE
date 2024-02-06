@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class IamgeInput extends StatefulWidget {
-  const IamgeInput({super.key});
+class ImageInput extends StatefulWidget {
+  final Function(File) onSelectImage; // 콜백 함수 추가
+
+  const ImageInput({required this.onSelectImage, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -11,19 +13,20 @@ class IamgeInput extends StatefulWidget {
   }
 }
 
-class _ImageInputState extends State<IamgeInput> {
+class _ImageInputState extends State<ImageInput> {
   File? _selectedImage;
 
   void _takePicture() async {
     final imagePicker = ImagePicker();
-    final pickedIamge =
+    final pickedImage =
         await imagePicker.pickImage(source: ImageSource.camera, maxWidth: 70);
-    if (pickedIamge == null) {
+    if (pickedImage == null) {
       return;
     }
     setState(() {
-      _selectedImage = File(pickedIamge.path);
+      _selectedImage = File(pickedImage.path);
     });
+    widget.onSelectImage(_selectedImage!); // 사진을 선택하면 콜백 함수 호출
   }
 
   @override
