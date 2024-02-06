@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:quick_drop/screen/home/donation/image_input.dart';
 import 'donation_ai_upload.dart';
 import '../search.dart';
 import 'package:http/http.dart' as http;
@@ -23,11 +26,11 @@ class _DonationUploadState extends State<DonationUpload> {
   Map<String, dynamic> productInfo = {
     'Product Title': {
       'controller': TextEditingController(),
-      'isEditing': false,
+      'isEditing': true,
     },
     'Product description': {
       'controller': TextEditingController(),
-      'isEditing': false,
+      'isEditing': true,
     },
   };
 
@@ -60,6 +63,15 @@ class _DonationUploadState extends State<DonationUpload> {
     }
   }
 
+  void _navigateToScreen(Widget screen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => screen,
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +79,11 @@ class _DonationUploadState extends State<DonationUpload> {
 
   @override
   void dispose() {
+    brandNameController.dispose();
+    dateOfManufactureController.dispose();
+    colorController.dispose();
+    categoryController.dispose();
+
     super.dispose();
   }
 
@@ -172,11 +189,12 @@ class _DonationUploadState extends State<DonationUpload> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
-                color: Colors.black,
-                child: const SizedBox(
-                  // Image will be set
+                child: SizedBox(
                   height: 80,
                   width: 80,
+                  child: IconButton(
+                      onPressed: () => _navigateToScreen(const IamgeInput()),
+                      icon: const Icon(Icons.camera)),
                 ),
               ),
               Padding(

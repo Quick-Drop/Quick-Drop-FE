@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _navigateToScreen(const DonationUpload()),
-        backgroundColor: Colors.purple,
+        backgroundColor: const Color(0xFF4B3688),
         child: const Icon(Icons.add),
       ),
     );
