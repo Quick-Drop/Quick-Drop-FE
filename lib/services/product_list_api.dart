@@ -4,46 +4,47 @@ import 'package:http/http.dart' as http;
 
 class ProductInfo with ChangeNotifier {
   final int id;
-  final String name;
+  final String category;
   final String title;
   final String description;
-  final String address;
 
   ProductInfo({
     required this.id,
-    required this.name,
+    required this.category,
     required this.title,
     required this.description,
-    required this.address,
   });
 
   factory ProductInfo.fromJson(Map<String, dynamic> json) {
     if (!json.containsKey('id') ||
-        !json.containsKey('name') ||
+        !json.containsKey('category') ||
         !json.containsKey('title') ||
-        !json.containsKey('description') ||
-        !json.containsKey('address')) {
+        !json.containsKey('description')) {
       throw Exception('Invalid JSON data');
     }
     return ProductInfo(
       id: json["id"],
-      name: json["name"],
+      category: json["category"],
       title: json["title"],
       description: json["description"],
-      address: json["address"],
     );
   }
 }
 
 class ItemListApi with ChangeNotifier {
   static Future<List<ProductInfo>> fetchData() async {
-    final response = await http.get(Uri.parse(
-        'https://c0d37d40-3638-49a9-942b-3fb838191686.mock.pstmn.io/list'));
+    final response = await http.get(
+      Uri.parse('http://34.134.162.255:8000/product'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((item) => ProductInfo.fromJson(item)).toList();
     } else {
+      print(response.statusCode);
       throw Exception('Failed to load Item List');
     }
   }
