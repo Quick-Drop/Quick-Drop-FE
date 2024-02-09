@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
 
+import 'dart:io';
+
 class AiUploadScreen extends StatelessWidget {
-  const AiUploadScreen({super.key});
+  final String productTitle;
+  final String productDescription;
+  final String brandName;
+  final String dateOfManufacture;
+  final String color;
+  final String category;
+  final File image;
+
+  const AiUploadScreen(
+      {Key? key,
+      required this.productTitle,
+      required this.productDescription,
+      required this.brandName,
+      required this.dateOfManufacture,
+      required this.color,
+      required this.category,
+      required this.image})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +37,24 @@ class AiUploadScreen extends StatelessWidget {
               color: Colors.transparent,
               border: Border.all(color: Colors.black, width: 2),
             ),
-            child: const Row(
-              children: [
-                Icon(Icons.camera),
-                Flexible(
-                  child: Text(
-                    'If the auto-description doesn’t work enough,you can edit it by yourself',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ),
-              ],
+            child:
+                //  Row(
+                //   children: [
+                //     IconButton(
+                //       icon: const Icon(Icons.camera),
+                //       onPressed: () {},
+                //     ),
+                //     const Flexible(
+                //       child: Text(
+                //         'If the auto-description doesn’t work enough,you can edit it by yourself',
+                //         style: TextStyle(fontSize: 12, color: Colors.grey),
+                //       ),
+                //     ),
+                //   ],
+                // )
+                Image.file(
+              image,
+              fit: BoxFit.cover,
             ),
           ),
           const SizedBox(
@@ -47,9 +74,9 @@ class AiUploadScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Book stand Book',
-                          style: TextStyle(
+                        Text(
+                          productTitle,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
@@ -61,10 +88,10 @@ class AiUploadScreen extends StatelessWidget {
                             color: const Color(0xFFFAF9FD),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Text(
-                              'Funiture',
-                              style: TextStyle(
+                              category,
+                              style: const TextStyle(
                                   color: Color(0xFF54408C),
                                   fontWeight: FontWeight.bold),
                             ),
@@ -72,26 +99,26 @@ class AiUploadScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text('Category'), Text('Furniture')],
+                      children: [const Text('Category'), Text(category)],
                     ),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text('Color'), Text('black')],
+                      children: [const Text('Color'), Text(color)],
                     ),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Date of Manufacture'),
-                        Text('2023.11.11')
+                        const Text('Date of Manufacture'),
+                        Text(dateOfManufacture)
                       ],
                     ),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Name of Brand'),
-                        Text('Han-ssam'),
+                        const Text('Name of Brand'),
+                        Text(brandName),
                       ],
                     ),
                     Row(

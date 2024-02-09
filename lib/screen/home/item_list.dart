@@ -51,8 +51,8 @@ class _ItemListState extends State<ItemList> {
                     );
                   },
                   child: ListTile(
-                    title: Text(productInfo.name),
-                    subtitle: Text(productInfo.address),
+                    title: Text(productInfo.title),
+                    subtitle: Text(productInfo.category),
                     trailing: const Icon(Icons.arrow_forward),
                   ),
                 );

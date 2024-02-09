@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../home.dart';
 import 'image_input.dart';
-// import 'donation_ai_upload.dart';
+import 'donation_ai_upload.dart';
 import '../search.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,10 +18,6 @@ class _DonationUploadState extends State<DonationUpload> {
   final formKey = GlobalKey<FormState>();
   File? _pickedImage;
   bool _isEditingAll = false;
-  final brandNameController = TextEditingController();
-  final dateOfManufactureController = TextEditingController();
-  final colorController = TextEditingController();
-  final categoryController = TextEditingController();
 
   Map<String, dynamic> productInfo = {
     'Product Title': {
@@ -33,31 +30,36 @@ class _DonationUploadState extends State<DonationUpload> {
     },
   };
 
+  final brandNameController = TextEditingController();
+  final dateOfManufactureController = TextEditingController();
+  final colorController = TextEditingController();
+  final categoryController = TextEditingController();
+
   void sendPostRequest() async {
     final response = await http.post(
-      Uri.parse(
-          'https://c0d37d40-3638-49a9-942b-3fb838191686.mock.pstmn.io/upload'),
+      Uri.parse('http://34.134.162.255:8000/donation/upload'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, dynamic>{
+        'user_id': 1,
         'Product_Title': productInfo['Product Title']['controller'].text,
         'Product_description':
             productInfo['Product description']['controller'].text,
         'brandName': brandNameController.text,
         'dateOfManufacture': dateOfManufactureController.text,
         'color': colorController.text,
-        'category': categoryController.text,
+        'category': categoryController.text
       }),
     );
 
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response,
       // then parse the JSON.
-      print('Success!');
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
+      print(response.statusCode);
       throw Exception('Failed to create data.');
     }
   }
@@ -338,7 +340,38 @@ class _DonationUploadState extends State<DonationUpload> {
                     ),
                     IconButton(
                       onPressed: () {
-                        // edit upload description
+                        showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) {
+                            return Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(25.0),
+                                  topRight: Radius.circular(25.0),
+                                ),
+                              ),
+                              height: MediaQuery.of(context).size.height * 0.88,
+                              child: AiUploadScreen(
+                                productTitle: productInfo['Product Title']
+                                        ['controller']
+                                    .text,
+                                productDescription:
+                                    productInfo['Product description']
+                                            ['controller']
+                                        .text,
+                                brandName: brandNameController.text,
+                                dateOfManufacture:
+                                    dateOfManufactureController.text,
+                                color: colorController.text,
+                                category: categoryController.text,
+                                image: _pickedImage!,
+                              ),
+                            );
+                          },
+                        );
                       },
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -501,25 +534,8 @@ class _DonationUploadState extends State<DonationUpload> {
   Widget buildUploadButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        // showModalBottomSheet<void>(
-        //   context: context,
-        //   isScrollControlled: true,
-        //   backgroundColor: Colors.transparent,
-        //   builder: (context) {
-        //     return Container(
-        //       decoration: const BoxDecoration(
-        //         color: Colors.white,
-        //         borderRadius: BorderRadius.only(
-        //           topLeft: Radius.circular(25.0),
-        //           topRight: Radius.circular(25.0),
-        //         ),
-        //       ),
-        //       height: MediaQuery.of(context).size.height * 0.88,
-        //       child: const AiUploadScreen(),
-        //     );
-        //   },
-        // );
         sendPostRequest();
+        _navigateToScreen(const HomeScreen());
       },
       child: const Text('Upload'),
     );

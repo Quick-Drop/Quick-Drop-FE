@@ -51,7 +51,7 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            productInfo.name,
+            productInfo.title,
             style: const TextStyle(
               color: Color(0xFF121212),
               fontSize: 20,
@@ -63,7 +63,7 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
           ),
           const SizedBox(height: 30),
           Text(
-            productInfo.address,
+            productInfo.description,
             style: const TextStyle(
               color: Colors.black,
               fontSize: 16,
@@ -74,7 +74,7 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
           ),
           const SizedBox(height: 30),
           Text(
-            productInfo.description,
+            productInfo.category,
             style: const TextStyle(
               color: Color(0xFFA5A5A5),
               fontSize: 14,
