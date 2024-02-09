@@ -1,10 +1,30 @@
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // jsonEncode & jsonDecode하기 위해.
+
 import 'package:flutter/material.dart';
 import 'package:quick_drop/screen/signInUp/success.dart';
 import '../home/home.dart';
 import 'signIn.dart';
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
   const SignUp({super.key});
+
+  @override
+  _SignUpState createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +80,19 @@ class SignUp extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                _buildTextField(label: 'Name'),
-                _buildTextField(label: 'Email'),
+                _buildTextField(
+                  label: 'Name',
+                  controllerInstance: _nameController,
+                ),
+                _buildTextField(
+                  label: 'Email',
+                  controllerInstance: _emailController,
+                ),
                 _buildTextField(
                   label: 'Password',
                   isPassword: true,
                   icon_suf: Icons.visibility_off_outlined,
+                  controllerInstance: _passwordController,
                 ),
                 const SizedBox(height: 16),
                 TextButton(
@@ -79,13 +106,19 @@ class SignUp extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SuccessScreen()),
-                  (route) => false,
-                );
+              onPressed: () async {
+                // Call the API
+                http.Response response = await createUser();
+
+                if (response.statusCode == 200) {
+                  var data = jsonDecode(response.body);
+                  if (data['status'] == 'success') {
+                  } else {
+                    // Handle error or display a message
+                  }
+                } else {
+                  throw Exception('Failed to register. Try again.');
+                }
               },
               child: const Text('Register'),
             ),
@@ -121,6 +154,7 @@ class SignUp extends StatelessWidget {
 
   Widget _buildTextField({
     required String label,
+    required TextEditingController controllerInstance,
     bool isPassword = false,
     IconData? icon_suf,
   }) {
@@ -134,6 +168,7 @@ class SignUp extends StatelessWidget {
         ),
       ),
       TextFormField(
+        controller: controllerInstance,
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
@@ -152,5 +187,22 @@ class SignUp extends StatelessWidget {
         style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
       ),
     ]);
+  }
+
+  Future<http.Response> createUser() async {
+    final response = await http.post(
+      Uri.parse('http://34.134.162.255:8000/signup'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, String>{
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'password': _passwordController.text
+        },
+      ),
+    );
+    return response;
   }
 }
