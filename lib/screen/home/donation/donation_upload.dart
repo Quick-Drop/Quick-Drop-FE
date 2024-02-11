@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:quick_drop/services/upload_post_api.dart';
 import '../home.dart';
 import 'image_input.dart';
 import 'donation_ai_upload.dart';
 import '../search.dart';
-import 'package:http/http.dart' as http;
 
 class DonationUpload extends StatefulWidget {
   const DonationUpload({super.key});
@@ -35,14 +34,10 @@ class _DonationUploadState extends State<DonationUpload> {
   final colorController = TextEditingController();
   final categoryController = TextEditingController();
 
-  void sendPostRequest() async {
-    final response = await http.post(
-      Uri.parse('http://34.134.162.255:8000/donation/upload'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'user_id': 1,
+  void _uploadData() async {
+    try {
+      await UploadPostApi.sendPostRequest({
+        'user_id': 1, // 추후에 실제 user_id를 보내는 방향으로 수정 필요할 것 같습니다.
         'Product_Title': productInfo['Product Title']['controller'].text,
         'Product_description':
             productInfo['Product description']['controller'].text,
@@ -50,17 +45,10 @@ class _DonationUploadState extends State<DonationUpload> {
         'dateOfManufacture': dateOfManufactureController.text,
         'color': colorController.text,
         'category': categoryController.text
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      // If the server returns a 200 OK response,
-      // then parse the JSON.
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      print(response.statusCode);
-      throw Exception('Failed to create data.');
+      });
+      // Handle success
+    } catch (e) {
+      // Handle error
     }
   }
 
@@ -192,25 +180,23 @@ class _DonationUploadState extends State<DonationUpload> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Container(
-                child: SizedBox(
-                  height: 80,
-                  width: 80,
-                  // need to show image
-                  child: _pickedImage == null
-                      ? IconButton(
-                          onPressed: () => _navigateToScreen(
-                            ImageInput(
-                              onSelectImage: (File pickedImage) {
-                                Navigator.pop(
-                                    context, pickedImage); // 선택한 사진을 결과로 반환
-                              },
-                            ),
+              SizedBox(
+                height: 80,
+                width: 80,
+                // need to show image
+                child: _pickedImage == null
+                    ? IconButton(
+                        onPressed: () => _navigateToScreen(
+                          ImageInput(
+                            onSelectImage: (File pickedImage) {
+                              Navigator.pop(
+                                  context, pickedImage); // 선택한 사진을 결과로 반환
+                            },
                           ),
-                          icon: const Icon(Icons.camera),
-                        )
-                      : Image.file(_pickedImage!),
-                ),
+                        ),
+                        icon: const Icon(Icons.camera),
+                      )
+                    : Image.file(_pickedImage!),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -534,7 +520,7 @@ class _DonationUploadState extends State<DonationUpload> {
   Widget buildUploadButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        sendPostRequest();
+        _uploadData();
         _navigateToScreen(const HomeScreen());
       },
       child: const Text('Upload'),
