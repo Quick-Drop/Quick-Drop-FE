@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:quick_drop/services/upload_post_api.dart';
+import '../../../services/upload_post_api.dart';
 import '../home.dart';
 import 'image_input.dart';
 import 'donation_ai_upload.dart';
@@ -17,6 +18,7 @@ class _DonationUploadState extends State<DonationUpload> {
   final formKey = GlobalKey<FormState>();
   File? _pickedImage;
   bool _isEditingAll = false;
+  DateTime date = DateTime.now();
 
   Map<String, dynamic> productInfo = {
     'Product Title': {
@@ -30,27 +32,9 @@ class _DonationUploadState extends State<DonationUpload> {
   };
 
   final brandNameController = TextEditingController();
-  final dateOfManufactureController = TextEditingController();
+  DateTime dateOfManufacture = DateTime.now();
   final colorController = TextEditingController();
   final categoryController = TextEditingController();
-
-  void _uploadData() async {
-    try {
-      await UploadPostApi.sendPostRequest({
-        'user_id': 1, // 추후에 실제 user_id를 보내는 방향으로 수정 필요할 것 같습니다.
-        'Product_Title': productInfo['Product Title']['controller'].text,
-        'Product_description':
-            productInfo['Product description']['controller'].text,
-        'brandName': brandNameController.text,
-        'dateOfManufacture': dateOfManufactureController.text,
-        'color': colorController.text,
-        'category': categoryController.text
-      });
-      // Handle success
-    } catch (e) {
-      // Handle error
-    }
-  }
 
   void _navigateToScreen(Widget screen) async {
     final result = await Navigator.push(
@@ -64,6 +48,28 @@ class _DonationUploadState extends State<DonationUpload> {
     }
   }
 
+  void _uploadData() async {
+    try {
+      var requestData = {
+        'user_id': 1, // Replace with actual user ID
+        'Product_Title': productInfo['Product Title']['controller'].text,
+        'Product_description':
+            productInfo['Product description']['controller'].text,
+        'brandName': brandNameController.text,
+        'dateOfManufacture': dateOfManufacture.toString(),
+        'color': colorController.text,
+        'category': categoryController.text
+      };
+
+      await UploadApi.sendPostRequest(requestData);
+    } catch (e) {
+      // Handle error
+      print('Error uploading data: $e');
+    }
+  }
+
+  // AI 라벨링 데이터 GET 함수 필요(이미지 테스트 완료시 구현 예정)
+
   @override
   void initState() {
     super.initState();
@@ -72,7 +78,6 @@ class _DonationUploadState extends State<DonationUpload> {
   @override
   void dispose() {
     brandNameController.dispose();
-    dateOfManufactureController.dispose();
     colorController.dispose();
     categoryController.dispose();
 
@@ -165,13 +170,14 @@ class _DonationUploadState extends State<DonationUpload> {
                   ),
                   constraints: const BoxConstraints(),
                   padding: EdgeInsets.zero,
-                  onPressed: () {
+                  onPressed: () async {
                     setState(() {
                       _isEditingAll = !_isEditingAll;
                       productInfo.forEach((key, value) {
                         value['isEditing'] = _isEditingAll;
                       });
                     });
+                    await UploadApi.uploadImage(File(_pickedImage!.path));
                   },
                 ),
               ],
@@ -183,14 +189,12 @@ class _DonationUploadState extends State<DonationUpload> {
               SizedBox(
                 height: 80,
                 width: 80,
-                // need to show image
                 child: _pickedImage == null
                     ? IconButton(
                         onPressed: () => _navigateToScreen(
                           ImageInput(
                             onSelectImage: (File pickedImage) {
-                              Navigator.pop(
-                                  context, pickedImage); // 선택한 사진을 결과로 반환
+                              Navigator.pop(context, pickedImage);
                             },
                           ),
                         ),
@@ -279,6 +283,41 @@ class _DonationUploadState extends State<DonationUpload> {
     );
   }
 
+  Widget buildDatePickRow(String text) {
+    return SizedBox(
+      height: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(text),
+          TextButton(
+            onPressed: () async {
+              final selectedDate = await showDatePicker(
+                context: context,
+                initialDate: dateOfManufacture,
+                firstDate: DateTime(2000),
+                lastDate: DateTime.now(),
+              );
+              if (selectedDate != null) {
+                setState(() {
+                  dateOfManufacture = selectedDate;
+                });
+              }
+            },
+            style: TextButton.styleFrom(padding: EdgeInsets.zero),
+            child: Text(
+              "${dateOfManufacture.year.toString()}.${dateOfManufacture.month.toString().padLeft(2, '0')}.${dateOfManufacture.day.toString().padLeft(2, '0')}",
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.grey),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   TextFormField buildTextFormField(String hintText, controller) {
     return TextFormField(
       controller: controller,
@@ -349,8 +388,7 @@ class _DonationUploadState extends State<DonationUpload> {
                                             ['controller']
                                         .text,
                                 brandName: brandNameController.text,
-                                dateOfManufacture:
-                                    dateOfManufactureController.text,
+                                dateOfManufacture: dateOfManufacture.toString(),
                                 color: colorController.text,
                                 category: categoryController.text,
                                 image: _pickedImage!,
@@ -372,8 +410,7 @@ class _DonationUploadState extends State<DonationUpload> {
               ),
               const SizedBox(height: 8),
               buildRow('Name of Brand', "Ex.Apple", brandNameController),
-              buildRow('Date of Manufacture', "2023.11.11",
-                  dateOfManufactureController),
+              buildDatePickRow('Date of ManuFacture'),
               buildRow('color', "Ex.black", colorController),
               buildRow('category', "Ex.Electronics", categoryController),
               Container(

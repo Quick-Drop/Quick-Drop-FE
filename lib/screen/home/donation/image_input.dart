@@ -19,7 +19,7 @@ class _ImageInputState extends State<ImageInput> {
   void _takePicture() async {
     final imagePicker = ImagePicker();
     final pickedImage =
-        await imagePicker.pickImage(source: ImageSource.camera, maxWidth: 400);
+        await imagePicker.pickImage(source: ImageSource.gallery, maxWidth: 400);
     if (pickedImage == null) {
       return;
     }
@@ -33,7 +33,7 @@ class _ImageInputState extends State<ImageInput> {
   Widget build(BuildContext context) {
     Widget content = TextButton.icon(
       icon: const Icon(Icons.camera),
-      label: const Text('Take a picture'),
+      label: const Text('Click this icon and move to your gallery'),
       onPressed: _takePicture,
     );
     if (_selectedImage != null) {
