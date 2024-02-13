@@ -6,7 +6,7 @@ class AiUploadScreen extends StatelessWidget {
   final String productTitle;
   final String productDescription;
   final String brandName;
-  final String dateOfManufacture;
+  final DateTime dateOfManufacture;
   final String color;
   final String category;
   final File image;
@@ -111,7 +111,9 @@ class AiUploadScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Date of Manufacture'),
-                        Text(dateOfManufacture)
+                        Text(
+                          "${dateOfManufacture.year.toString()}.${dateOfManufacture.month.toString().padLeft(2, '0')}.${dateOfManufacture.day.toString().padLeft(2, '0')}",
+                        )
                       ],
                     ),
                     Row(

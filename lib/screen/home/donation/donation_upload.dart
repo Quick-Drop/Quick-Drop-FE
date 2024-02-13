@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import '../../../userState.dart';
 import '../../../services/upload_post_api.dart';
 import '../home.dart';
 import 'image_input.dart';
@@ -51,7 +51,7 @@ class _DonationUploadState extends State<DonationUpload> {
   void _uploadData() async {
     try {
       var requestData = {
-        'user_id': 1, // Replace with actual user ID
+        'user_id': UserState.currentUserId,
         'Product_Title': productInfo['Product Title']['controller'].text,
         'Product_description':
             productInfo['Product description']['controller'].text,
@@ -365,37 +365,57 @@ class _DonationUploadState extends State<DonationUpload> {
                     ),
                     IconButton(
                       onPressed: () {
-                        showModalBottomSheet<void>(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) {
-                            return Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(25.0),
-                                  topRight: Radius.circular(25.0),
+                        bool anyEmpty = productInfo['Product Title']
+                                    ['controller']
+                                .text
+                                .isEmpty ||
+                            productInfo['Product description']['controller']
+                                .text
+                                .isEmpty ||
+                            brandNameController.text.isEmpty ||
+                            colorController.text.isEmpty ||
+                            categoryController.text.isEmpty ||
+                            _pickedImage == null;
+
+                        if (anyEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Please fill in all fields')),
+                          );
+                        } else {
+                          showModalBottomSheet<void>(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) {
+                              return Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(25.0),
+                                    topRight: Radius.circular(25.0),
+                                  ),
                                 ),
-                              ),
-                              height: MediaQuery.of(context).size.height * 0.88,
-                              child: AiUploadScreen(
-                                productTitle: productInfo['Product Title']
-                                        ['controller']
-                                    .text,
-                                productDescription:
-                                    productInfo['Product description']
-                                            ['controller']
-                                        .text,
-                                brandName: brandNameController.text,
-                                dateOfManufacture: dateOfManufacture.toString(),
-                                color: colorController.text,
-                                category: categoryController.text,
-                                image: _pickedImage!,
-                              ),
-                            );
-                          },
-                        );
+                                height:
+                                    MediaQuery.of(context).size.height * 0.88,
+                                child: AiUploadScreen(
+                                  productTitle: productInfo['Product Title']
+                                          ['controller']
+                                      .text,
+                                  productDescription:
+                                      productInfo['Product description']
+                                              ['controller']
+                                          .text,
+                                  brandName: brandNameController.text,
+                                  dateOfManufacture: dateOfManufacture,
+                                  color: colorController.text,
+                                  category: categoryController.text,
+                                  image: _pickedImage!,
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
