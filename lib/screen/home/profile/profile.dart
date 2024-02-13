@@ -1,4 +1,7 @@
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
+import '../../../userState.dart';
 import 'myAccount.dart';
 import 'address.dart';
 import 'donationHistory.dart';
@@ -152,12 +155,20 @@ class ProfileHeader extends StatelessWidget {
               const SizedBox(height: 24),
               ElevatedButton(
                 child: const Text('Logout'),
-                onPressed: () => {},
+                onPressed: () => performLogout(context),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                child: const Text('Cancel'),
                 onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xffFAF9FD),
+                ),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Color(0xff54408C),
+                  ),
+                ),
               ),
               const SizedBox(height: 42)
             ],
@@ -165,5 +176,14 @@ class ProfileHeader extends StatelessWidget {
         );
       },
     );
+  }
+
+  void performLogout(BuildContext context) async {
+    UserState.setCurrentUserId(0);
+    // const storage = FlutterSecureStorage();
+    // await storage.delete(key: 'token');
+
+    Navigator.pop(context);
+    Navigator.pushReplacementNamed(context, '/');
   }
 }

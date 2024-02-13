@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../home/home.dart';
+import 'signIn.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key});
@@ -48,7 +48,7 @@ class SuccessScreen extends StatelessWidget {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const HomeScreen()),
+                              builder: (context) => const SignIn()),
                           (route) => false,
                         );
                       },

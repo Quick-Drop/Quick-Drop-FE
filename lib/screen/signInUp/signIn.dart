@@ -1,10 +1,26 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/svg.dart';
+import '../../userState.dart';
 import '../home/home.dart';
 import 'signUp.dart';
 
-class SignIn extends StatelessWidget {
+class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
+
+  @override
+  State<SignIn> createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,79 +52,123 @@ class SignIn extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Welcome Back 👋',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Welcome Back 👋',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Sign to your account',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Sign to your account',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                _buildTextField(label: 'Email'),
-                _buildTextField(
-                  label: 'Password',
-                  isPassword: true,
-                  icon_suf: Icons.visibility_off_outlined,
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(color: Color(0xff54408C)),
+                  const SizedBox(height: 24),
+                  _buildTextField(
+                    label: 'Email',
+                    controller: _emailController,
                   ),
-                ),
-              ],
-            ),
+                  _buildTextField(
+                    label: 'Password',
+                    controller: _passwordController,
+                    isPassword: true,
+                    icon_suf: Icons.visibility_off_outlined,
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: Color(0xff54408C)),
+                    ),
+                  ),
+                ],
+              ),
 
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Login'),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Don't have an account?",
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUp()),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    // 유효성 검사를 통과 후 HTTP 요청
+                    http.Response response = await signIn(
+                      _emailController.text,
+                      _passwordController.text,
                     );
-                  },
-                  child: const Text(
-                    "Sign Up",
-                    style: TextStyle(color: Color(0xff54408C)),
-                  ),
-                )
-              ],
-            ),
 
-            const Divider(),
-            const SizedBox(height: 24),
-            // 소셜로그인 버튼
-          ],
+                    if (response.statusCode == 200) {
+                      var data = jsonDecode(response.body);
+                      // if (data['token'] != null) {
+                      final userId =
+                          data['user_id']; // 'user_id'는 서버 응답에 따라 다를 수 있음
+                      UserState.setCurrentUserId(
+                          userId); // UserState에 사용자 ID 저장
+                      // const storage = FlutterSecureStorage(); // token 로컬저장소에 저장
+                      // await storage.write(key: 'token', value: data['token']);
+
+                      //navigate to HomeScreen
+                      if (mounted) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                          (Route<dynamic> route) => false,
+                        );
+                      }
+                      // }
+                    } else {
+                      _showErrorDialog(
+                          context, "Error code: ${response.statusCode}");
+                    }
+                  } else {
+                    _showErrorDialog(context,
+                        "Please check your email or password, and try again");
+                  }
+                },
+                child: const Text('Login'),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Don't have an account?",
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignUp()),
+                      );
+                    },
+                    child: const Text(
+                      "Sign Up",
+                      style: TextStyle(color: Color(0xff54408C)),
+                    ),
+                  )
+                ],
+              ),
+
+              const Divider(),
+              const SizedBox(height: 24),
+              // 소셜로그인 버튼
+            ],
+          ),
         ),
       ),
     );
@@ -116,6 +176,7 @@ class SignIn extends StatelessWidget {
 
   Widget _buildTextField({
     required String label,
+    required TextEditingController controller,
     bool isPassword = false,
     IconData? icon_suf,
   }) {
@@ -129,6 +190,7 @@ class SignIn extends StatelessWidget {
         ),
       ),
       TextFormField(
+        controller: controller,
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
@@ -147,5 +209,37 @@ class SignIn extends StatelessWidget {
         style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
       ),
     ]);
+  }
+
+  Future<http.Response> signIn(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('http://34.134.162.255:8000/signin'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+      }),
+    );
+    return response;
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop(); // Dismiss the dialog
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
