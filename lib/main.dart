@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'screen/signInUp/signIn.dart';
 import 'services/product_list_api.dart';
 import 'onboarding.dart';
 
@@ -36,6 +37,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
         home: const OnBoarding(),
+        routes: {
+          '/signIn': (context) => const SignIn(),
+        },
       ),
     );
   }
