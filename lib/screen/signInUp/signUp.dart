@@ -3,6 +3,7 @@ import 'dart:convert'; // jsonEncode & jsonDecode하기 위해.
 
 import 'package:flutter/material.dart';
 import 'package:quick_drop/screen/signInUp/success.dart';
+import 'package:quick_drop/services/api_constants.dart';
 import '../home/home.dart';
 import 'signIn.dart';
 
@@ -256,7 +257,7 @@ class _SignUpState extends State<SignUp> {
 
   Future<http.Response> createUser() async {
     final response = await http.post(
-      Uri.parse('http://34.134.162.255:8000/signup'),
+      Uri.parse('${ApiConstants.BASE_URL}/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

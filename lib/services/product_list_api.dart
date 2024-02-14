@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:quick_drop/services/api_constants.dart';
 
 class ProductInfo with ChangeNotifier {
   final int id;
@@ -37,7 +38,7 @@ class ProductInfo with ChangeNotifier {
 class ItemListApi with ChangeNotifier {
   static Future<List<ProductInfo>> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://34.71.93.166:8000/product'),
+      Uri.parse('${ApiConstants.BASE_URL}/product'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

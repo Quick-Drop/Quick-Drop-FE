@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:quick_drop/services/api_constants.dart';
 
 class UploadApi {
   static Future<void> sendPostRequest(Map<String, dynamic> requestData) async {
     try {
-      var uri = Uri.parse('http://34.71.93.166:8000/donation/upload');
+      var uri = Uri.parse('${ApiConstants.BASE_URL}/donation/upload');
       var body = jsonEncode(requestData);
 
       var response = await http.post(
@@ -26,7 +27,7 @@ class UploadApi {
 
   static Future<String> uploadImageAndGetCategory(File image) async {
     try {
-      var uri = Uri.parse('http://34.71.93.166:8000/classify');
+      var uri = Uri.parse('${ApiConstants.BASE_URL}/classify');
       var bytes = await image.readAsBytes();
       var imageData = base64Encode(bytes);
 

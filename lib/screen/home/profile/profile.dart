@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:quick_drop/services/api_constants.dart';
 import '../../../userState.dart';
 import 'myAccount.dart';
 import 'address.dart';
@@ -111,7 +112,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   Future<void> fetchUserProfile() async {
     var userId = UserState.getCurrentUserId(); // Get current user id
     var response = await http
-        .get(Uri.parse('http://34.134.162.255:8000/user/$userId/profile'));
+        .get(Uri.parse('${ApiConstants.BASE_URL}/user/$userId/profile'));
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
