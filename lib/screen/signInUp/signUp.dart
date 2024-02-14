@@ -256,7 +256,7 @@ class _SignUpState extends State<SignUp> {
 
   Future<http.Response> createUser() async {
     final response = await http.post(
-      Uri.parse('http://34.134.162.255:8000/signup'),
+      Uri.parse('http://34.71.93.166:8000/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

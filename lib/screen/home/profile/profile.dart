@@ -111,7 +111,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   Future<void> fetchUserProfile() async {
     var userId = UserState.getCurrentUserId(); // Get current user id
     var response = await http
-        .get(Uri.parse('http://34.134.162.255:8000/user/$userId/profile'));
+        .get(Uri.parse('http://34.71.93.166:8000//user/$userId/profile'));
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);

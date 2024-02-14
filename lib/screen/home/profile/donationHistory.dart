@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import '../../../userState.dart';
 
 class DonationHistory extends StatefulWidget {
   const DonationHistory({Key? key}) : super(key: key);
@@ -117,7 +120,7 @@ class DonationListWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           image: DecorationImage(
-                            image: AssetImage(donation['image'] as String),
+                            image: AssetImage(donation['image'] as String), //
                             fit: BoxFit.cover,
                           ),
                         ),

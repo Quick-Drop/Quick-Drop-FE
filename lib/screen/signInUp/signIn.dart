@@ -210,7 +210,7 @@ class _SignInState extends State<SignIn> {
 
   Future<http.Response> signIn(String email, String password) async {
     final response = await http.post(
-      Uri.parse('http://34.134.162.255:8000/signin'),
+      Uri.parse('http://34.71.93.166:8000/signin'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
