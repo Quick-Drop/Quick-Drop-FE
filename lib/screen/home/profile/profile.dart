@@ -9,9 +9,14 @@ import 'address.dart';
 import 'donationHistory.dart';
 import 'helpCenter.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   const Profile({super.key});
 
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,32 +27,98 @@ class Profile extends StatelessWidget {
           ProfileListItem(
             title: 'My Account',
             iconData: Icons.person_outline,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyAccount()),
-              );
+            onTap: () async {
+              if (UserState.getCurrentUserId() != 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyAccount()),
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Not Loginned'),
+                      content: const Text(
+                          'Login first, then you can access to this page'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pop(); // Dismiss the alert dialog
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
           ),
           ProfileListItem(
             title: 'Address',
             iconData: Icons.location_on_outlined,
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Address()),
-              );
+              if (UserState.getCurrentUserId() != 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Address()),
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Not Loginned'),
+                      content: const Text(
+                          'Login first, then you can access to this page'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pop(); // Dismiss the alert dialog
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
           ),
           ProfileListItem(
             title: 'Donation History',
             iconData: Icons.favorite_outline,
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const DonationHistory()),
-              );
+              if (UserState.getCurrentUserId() != 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const DonationHistory()),
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Not Loginned'),
+                      content: const Text(
+                          'Login first, then you can access to this page'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pop(); // Dismiss the alert dialog
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
           ),
           ProfileListItem(
