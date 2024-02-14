@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../services/product_list_api.dart';
 
@@ -20,22 +22,32 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildImageSection(),
+        _buildImageSection(productInfo.product_image_data),
         _buildDetailSection(),
         _buildButtonSection(),
       ],
     );
   }
 
-  Widget _buildImageSection() {
-    return const Center(
+  Widget _buildImageSection(String base64String) {
+    List<int> bytes = base64.decode(base64String);
+    Uint8List uint8List = Uint8List.fromList(bytes);
+    Image image = Image.memory(uint8List);
+
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24.0),
         child: SizedBox(
           height: 300,
           width: 300,
           child: DecoratedBox(
-            decoration: BoxDecoration(color: Colors.black),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              image: DecorationImage(
+                image: image.image,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
       ),

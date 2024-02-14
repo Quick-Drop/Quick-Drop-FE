@@ -59,6 +59,7 @@ class _ItemListState extends State<ItemList> {
               },
             );
           } else if (snapshot.hasError) {
+            print(snapshot.error);
             return const Center(
               child: Text('Sth went Wrong'),
             );
