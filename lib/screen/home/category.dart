@@ -9,31 +9,43 @@ class Category extends StatelessWidget {
         // padding: const EdgeInsets.all(9),
         children: const <Widget>[
           ListTile(
-            title: Text('Living'),
+            title: Text('Utensils'),
             trailing: Icon(Icons.chevron_right),
           ),
           ListTile(
-            title: Text('Electonics'),
+            title: Text('Furniture'),
             trailing: Icon(Icons.chevron_right),
           ),
           ListTile(
-            title: Text('Books'),
+            title: Text('interior'),
             trailing: Icon(Icons.chevron_right),
           ),
           ListTile(
-            title: Text('blahblah'),
+            title: Text('Electronics'),
             trailing: Icon(Icons.chevron_right),
           ),
           ListTile(
-            title: Text('blahblah'),
+            title: Text('Clothes'),
             trailing: Icon(Icons.chevron_right),
           ),
           ListTile(
-            title: Text('blahblah'),
+            title: Text('Cosmetics'),
             trailing: Icon(Icons.chevron_right),
           ),
           ListTile(
-            title: Text('blahblah'),
+            title: Text('Book'),
+            trailing: Icon(Icons.chevron_right),
+          ),
+          ListTile(
+            title: Text('Groceries'),
+            trailing: Icon(Icons.chevron_right),
+          ),
+          ListTile(
+            title: Text('e-ticket(mobile coupon)'),
+            trailing: Icon(Icons.chevron_right),
+          ),
+          ListTile(
+            title: Text('Etc'),
             trailing: Icon(Icons.chevron_right),
           ),
         ],
