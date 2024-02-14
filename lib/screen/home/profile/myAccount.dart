@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:quick_drop/services/api_constants.dart';
 import '../../../userState.dart';
 
 class MyAccount extends StatefulWidget {
@@ -129,7 +130,7 @@ class _MyAccountState extends State<MyAccount> {
   Future<void> fetchUserData() async {
     var userId = UserState.getCurrentUserId();
     final response = await http
-        .get(Uri.parse('http://34.71.93.166:8000/user/$userId/profile'));
+        .get(Uri.parse('${ApiConstants.BASE_URL}/user/$userId/profile'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
@@ -152,7 +153,7 @@ class _MyAccountState extends State<MyAccount> {
       'password': passwordController.text,
     };
     final response = await http.put(
-      Uri.parse('http://34.71.93.166:8000/user/$userId/profile'),
+      Uri.parse('${ApiConstants.BASE_URL}/user/$userId/profile'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -2,6 +2,7 @@ import 'dart:convert';
 //import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:quick_drop/services/api_constants.dart';
 // import 'package:flutter_svg/svg.dart';
 import '../../userState.dart';
 import '../home/home.dart';
@@ -210,7 +211,7 @@ class _SignInState extends State<SignIn> {
 
   Future<http.Response> signIn(String email, String password) async {
     final response = await http.post(
-      Uri.parse('http://34.71.93.166:8000/signin'),
+      Uri.parse('${ApiConstants.BASE_URL}/signin'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

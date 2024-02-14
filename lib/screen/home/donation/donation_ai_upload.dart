@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
+import '../../../services/upload_post_api.dart';
 import 'dart:io';
 
-class AiUploadScreen extends StatelessWidget {
+class AiUploadScreen extends StatefulWidget {
   final String productTitle;
   final String productDescription;
   final String brandName;
@@ -10,17 +10,53 @@ class AiUploadScreen extends StatelessWidget {
   final String color;
   final String category;
   final File image;
+  final Function(String) onSave;
 
-  const AiUploadScreen(
-      {Key? key,
-      required this.productTitle,
-      required this.productDescription,
-      required this.brandName,
-      required this.dateOfManufacture,
-      required this.color,
-      required this.category,
-      required this.image})
-      : super(key: key);
+  const AiUploadScreen({
+    Key? key,
+    required this.productTitle,
+    required this.productDescription,
+    required this.brandName,
+    required this.dateOfManufacture,
+    required this.color,
+    required this.category,
+    required this.image,
+    required this.onSave,
+  }) : super(key: key);
+
+  @override
+  State<AiUploadScreen> createState() => _AiUploadScreenState();
+}
+
+class _AiUploadScreenState extends State<AiUploadScreen> {
+  String categoryText = '';
+
+  Future<void> _uploadImageAndSetCategory() async {
+    try {
+      String categoryText =
+          await UploadApi.uploadImageAndGetCategory(widget.image);
+      // Extract 'Utensil' from the result string
+      if (categoryText.contains(':')) {
+        categoryText = categoryText.split(':')[1].trim();
+      }
+
+      categoryText = categoryText.replaceAll(
+          RegExp(r'[^\w\s]'), ''); // Remove non-word characters
+      categoryText =
+          categoryText.trim(); // Remove leading and trailing whitespace
+      setState(() {
+        this.categoryText = categoryText; // Update category text field
+      });
+    } catch (e) {
+      print('Error uploading image and getting category: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _uploadImageAndSetCategory();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,23 +73,8 @@ class AiUploadScreen extends StatelessWidget {
               color: Colors.transparent,
               border: Border.all(color: Colors.black, width: 2),
             ),
-            child:
-                //  Row(
-                //   children: [
-                //     IconButton(
-                //       icon: const Icon(Icons.camera),
-                //       onPressed: () {},
-                //     ),
-                //     const Flexible(
-                //       child: Text(
-                //         'If the auto-description doesn’t work enough,you can edit it by yourself',
-                //         style: TextStyle(fontSize: 12, color: Colors.grey),
-                //       ),
-                //     ),
-                //   ],
-                // )
-                Image.file(
-              image,
+            child: Image.file(
+              widget.image,
               fit: BoxFit.cover,
             ),
           ),
@@ -75,14 +96,14 @@ class AiUploadScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          productTitle,
+                          widget.productTitle,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: 18,
                           ),
                         ),
                         Container(
-                          width: 100,
+                          width: 80,
                           height: 36,
                           decoration: BoxDecoration(
                             color: const Color(0xFFFAF9FD),
@@ -90,10 +111,12 @@ class AiUploadScreen extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              category,
+                              categoryText,
                               style: const TextStyle(
-                                  color: Color(0xFF54408C),
-                                  fontWeight: FontWeight.bold),
+                                color: Color(0xFF54408C),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ),
@@ -101,18 +124,18 @@ class AiUploadScreen extends StatelessWidget {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [const Text('Category'), Text(category)],
+                      children: [const Text('Category'), Text(categoryText)],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [const Text('Color'), Text(color)],
+                      children: [const Text('Color'), Text(widget.color)],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Date of Manufacture'),
                         Text(
-                          "${dateOfManufacture.year.toString()}.${dateOfManufacture.month.toString().padLeft(2, '0')}.${dateOfManufacture.day.toString().padLeft(2, '0')}",
+                          "${widget.dateOfManufacture.year.toString()}.${widget.dateOfManufacture.month.toString().padLeft(2, '0')}.${widget.dateOfManufacture.day.toString().padLeft(2, '0')}",
                         )
                       ],
                     ),
@@ -120,7 +143,7 @@ class AiUploadScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Name of Brand'),
-                        Text(brandName),
+                        Text(widget.brandName),
                       ],
                     ),
                     Row(
@@ -179,7 +202,7 @@ class AiUploadScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 44)),
                   onPressed: () {
-                    // chat으로 이동
+                    widget.onSave(categoryText);
                   },
                   child: const Text('Save'),
                 ),
