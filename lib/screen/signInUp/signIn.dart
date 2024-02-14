@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:math';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+//import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/svg.dart';
@@ -112,8 +110,7 @@ class _SignInState extends State<SignIn> {
                     if (response.statusCode == 200) {
                       var data = jsonDecode(response.body);
                       // if (data['token'] != null) {
-                      final userId =
-                          data['user_id']; // 'user_id'는 서버 응답에 따라 다를 수 있음
+                      final userId = data['user_id']; // 'id'는 서버 응답에 따라 다를 수 있음
                       UserState.setCurrentUserId(
                           userId); // UserState에 사용자 ID 저장
                       // const storage = FlutterSecureStorage(); // token 로컬저장소에 저장

@@ -1,5 +1,6 @@
+// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import '../../../userState.dart';
 import 'myAccount.dart';
@@ -88,8 +89,38 @@ class ProfileListItem extends StatelessWidget {
   }
 }
 
-class ProfileHeader extends StatelessWidget {
+class ProfileHeader extends StatefulWidget {
   const ProfileHeader({super.key});
+
+  @override
+  State<ProfileHeader> createState() => _ProfileHeaderState();
+}
+
+class _ProfileHeaderState extends State<ProfileHeader> {
+  String username = '';
+  String phoneNumber = '';
+
+  bool get isUserLoggedIn => UserState.getCurrentUserId() != 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserProfile();
+  }
+
+  Future<void> fetchUserProfile() async {
+    var userId = UserState.getCurrentUserId(); // Get current user id
+    var response = await http
+        .get(Uri.parse('http://34.134.162.255:8000/user/$userId/profile'));
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      setState(() {
+        username = data['name'] ?? 'Not Loginned';
+        phoneNumber = phoneNumber = data['phone_number'] ?? ' ';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,25 +130,37 @@ class ProfileHeader extends StatelessWidget {
       child: Row(
         children: [
           const CircleAvatar(
-            backgroundImage: NetworkImage('https://example.com/avatar.jpg'),
+            backgroundColor: Color(0xffE7E1F8),
+            backgroundImage: AssetImage('assets/images/user_default.png'),
             radius: 40,
           ),
           const SizedBox(width: 16),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Daniel Park'),
-                Text('010 - 5543 - 5252'),
+                Text(
+                  username,
+                  style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff54408C)),
+                ),
+                Text(
+                  phoneNumber,
+                  style: const TextStyle(color: Colors.black),
+                ),
               ],
             ),
           ),
           TextButton(
-            onPressed: () => showLogoutDialog(context),
+            onPressed: isUserLoggedIn
+                ? () => showLogoutDialog(context)
+                : () => navigateToSignIn(context),
             style: TextButton.styleFrom(
               foregroundColor: const Color(0xffEF5A56),
             ),
-            child: const Text('Logout'),
+            child: Text(isUserLoggedIn ? 'Logout' : 'Login'),
           ),
         ],
       ),
@@ -178,12 +221,16 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
+  void navigateToSignIn(BuildContext context) {
+    Navigator.pushReplacementNamed(context, '/signIn');
+  }
+
   void performLogout(BuildContext context) async {
     UserState.setCurrentUserId(0);
     // const storage = FlutterSecureStorage();
     // await storage.delete(key: 'token');
 
     Navigator.pop(context);
-    Navigator.pushReplacementNamed(context, '/');
+    Navigator.pushReplacementNamed(context, '/signIn');
   }
 }
