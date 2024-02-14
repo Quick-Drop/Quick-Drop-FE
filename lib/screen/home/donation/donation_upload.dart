@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../userState.dart';
@@ -19,6 +20,7 @@ class _DonationUploadState extends State<DonationUpload> {
   File? _pickedImage;
   bool _isEditingAll = false;
   DateTime date = DateTime.now();
+  String categoryText = '';
 
   Map<String, dynamic> productInfo = {
     'Product Title': {
@@ -50,6 +52,9 @@ class _DonationUploadState extends State<DonationUpload> {
 
   void _uploadData() async {
     try {
+      List<int> imageBytes = await _pickedImage!.readAsBytes();
+      String base64Image = base64Encode(imageBytes);
+
       var requestData = {
         'user_id': UserState.currentUserId,
         'Product_Title': productInfo['Product Title']['controller'].text,
@@ -58,7 +63,8 @@ class _DonationUploadState extends State<DonationUpload> {
         'brandName': brandNameController.text,
         'dateOfManufacture': dateOfManufacture.toString(),
         'color': colorController.text,
-        'category': categoryController.text
+        'category': categoryController.text,
+        'image_data': base64Image,
       };
 
       await UploadApi.sendPostRequest(requestData);
@@ -68,11 +74,25 @@ class _DonationUploadState extends State<DonationUpload> {
     }
   }
 
-  // AI 라벨링 데이터 GET 함수 필요(이미지 테스트 완료시 구현 예정)
+  // AI 라벨링 데이터 GET 함수
+  void _uploadImageAndGetCategory() async {
+    try {
+      String category =
+          await UploadApi.uploadImageAndGetCategory(_pickedImage!);
+      setState(() {
+        categoryText = category;
+        categoryController.text =
+            categoryText; // Set the categoryController text
+      });
+    } catch (e) {
+      print('Error uploading image and getting category: $e');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _uploadImageAndGetCategory();
   }
 
   @override
@@ -177,7 +197,8 @@ class _DonationUploadState extends State<DonationUpload> {
                         value['isEditing'] = _isEditingAll;
                       });
                     });
-                    await UploadApi.uploadImage(File(_pickedImage!.path));
+                    await UploadApi.uploadImageAndGetCategory(
+                        File(_pickedImage!.path));
                   },
                 ),
               ],
@@ -411,6 +432,12 @@ class _DonationUploadState extends State<DonationUpload> {
                                   color: colorController.text,
                                   category: categoryController.text,
                                   image: _pickedImage!,
+                                  onSave: (categoryText) {
+                                    setState(() {
+                                      categoryController.text = categoryText;
+                                    });
+                                    Navigator.pop(context, categoryText);
+                                  },
                                 ),
                               );
                             },

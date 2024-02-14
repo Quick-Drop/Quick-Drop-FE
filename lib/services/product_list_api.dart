@@ -7,12 +7,14 @@ class ProductInfo with ChangeNotifier {
   final String category;
   final String title;
   final String description;
+  final String product_image_data;
 
   ProductInfo({
     required this.id,
     required this.category,
     required this.title,
     required this.description,
+    required this.product_image_data,
   });
 
   factory ProductInfo.fromJson(Map<String, dynamic> json) {
@@ -27,6 +29,7 @@ class ProductInfo with ChangeNotifier {
       category: json["category"],
       title: json["title"],
       description: json["description"],
+      product_image_data: json["product_image_data"],
     );
   }
 }
@@ -34,7 +37,7 @@ class ProductInfo with ChangeNotifier {
 class ItemListApi with ChangeNotifier {
   static Future<List<ProductInfo>> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://34.134.162.255:8000/product'),
+      Uri.parse('http://34.71.93.166:8000/product'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
