@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:quick_drop/services/api_constants.dart';
 import '../../../userState.dart';
 
 class DonationHistory extends StatefulWidget {
@@ -13,11 +15,32 @@ class DonationHistory extends StatefulWidget {
 class _DonationHistoryState extends State<DonationHistory>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late Future<List<Map<String, dynamic>>> donationsFuture;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    donationsFuture = fetchDonations();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchDonations() async {
+    final int userId = UserState.getCurrentUserId();
+    final response = await http
+        .get(Uri.parse('${ApiConstants.BASE_URL}/product?userId=$userId'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> products = jsonDecode(response.body);
+      return products.map<Map<String, dynamic>>((product) {
+        return {
+          'title': product['description'],
+          'donated': product['donated'] ? 'Complete' : 'In progress',
+          'image': product['product_image_data'],
+        };
+      }).toList();
+    } else {
+      throw Exception('Failed to load donations');
+    }
   }
 
   @override
@@ -58,55 +81,80 @@ class _DonationHistoryState extends State<DonationHistory>
           ),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          //Placeholder widget
-          DonationListWidget(status: 'In progress'),
-          DonationListWidget(status: 'Complete'),
-        ],
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: donationsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                DonationListWidget(
+                    donated: 'In progress', donations: snapshot.data!),
+                DonationListWidget(
+                    donated: 'Complete', donations: snapshot.data!),
+              ],
+            );
+          }
+        },
       ),
     );
   }
 }
 
-class DonationListWidget extends StatelessWidget {
-  final String status;
+class DonationListWidget extends StatefulWidget {
+  final String donated;
+  final List<Map<String, dynamic>> donations;
 
   const DonationListWidget({
     Key? key,
-    required this.status,
+    required this.donated,
+    required this.donations,
   }) : super(key: key);
 
   @override
+  State<DonationListWidget> createState() => _DonationListWidgetState();
+}
+
+class _DonationListWidgetState extends State<DonationListWidget> {
+  void _toggleFavorite(Map<String, dynamic> donation) async {
+    final int userId = UserState.getCurrentUserId();
+    final String newStatus =
+        donation['donated'] == 'In progress' ? 'Complete' : 'In progress';
+
+    await http.put(Uri.parse('${ApiConstants.BASE_URL}/product?userId=$userId'),
+        body: {'donated': newStatus});
+    setState(() {
+      donation['donated'] = newStatus;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // 임시 데이터 for donation list
-    final donations = <Map>[
-      {
-        'title': 'Refrigerator (Samsung)',
-        'status': 'In progress',
-        'image': 'assets/images/samsung_refri.jpg',
-      },
-      {
-        'title': 'HairDryer (Dyson)',
-        'status': 'In progress',
-        'image': 'assets/images/dyson.jpeg',
-      },
-      {
-        'title': 'toy train (Tayo)',
-        'status': 'Complete',
-        'image': 'assets/images/dyson.jpeg',
-      },
-    ]
-        .where((item) => item['status'] == status)
-        .toList(); //status로 필터링된 list 보여주기
+    // filtered 데이터 for donation list
+    final filteredDonations = widget.donations
+        .where((item) => item['donated'] == widget.donated)
+        .toList();
 
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
-          children: List.generate(donations.length, (index) {
-            var donation = donations[index];
+          children: List.generate(filteredDonations.length, (index) {
+            var donation = filteredDonations[index];
+
+            //image base64decode 잘 되는 지 test
+            String base64Image = donation['image'];
+            Uint8List bytes;
+            try {
+              bytes = base64Decode(base64Image);
+            } catch (e) {
+              bytes = Uint8List.fromList([]);
+            }
+
             return Column(
               children: [
                 Padding(
@@ -120,7 +168,7 @@ class DonationListWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           image: DecorationImage(
-                            image: AssetImage(donation['image'] as String), //
+                            image: MemoryImage(bytes),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -137,18 +185,21 @@ class DonationListWidget extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              donation['status'] == 'In progress'
+                              donation['donated'] == 'In progress'
                                   ? '-'
                                   : 'Donated to ~~', //피기부자 이름 api 사용?
                             ),
                           ],
                         ),
                       ),
-                      Icon(
-                        donation['status'] == 'In progress'
-                            ? Icons.favorite_border
-                            : Icons.favorite,
-                        color: const Color(0xff54408C),
+                      GestureDetector(
+                        onTap: () => _toggleFavorite(donation),
+                        child: Icon(
+                          donation['donated'] == 'In progress'
+                              ? Icons.favorite_border
+                              : Icons.favorite,
+                          color: const Color(0xff54408C),
+                        ),
                       ),
                     ],
                   ),
