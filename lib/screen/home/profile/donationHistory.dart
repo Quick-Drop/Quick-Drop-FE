@@ -27,7 +27,7 @@ class _DonationHistoryState extends State<DonationHistory>
   Future<List<Map<String, dynamic>>> fetchDonations() async {
     final int userId = UserState.getCurrentUserId();
     final response = await http
-        .get(Uri.parse('${ApiConstants.BASE_URL}/product?userId=$userId'));
+        .get(Uri.parse('${ApiConstants.BASE_URL}/user/$userId/donations'));
 
     if (response.statusCode == 200) {
       List<dynamic> products = jsonDecode(response.body);
@@ -36,6 +36,8 @@ class _DonationHistoryState extends State<DonationHistory>
           'title': product['description'],
           'donated': product['donated'] ? 'Complete' : 'In progress',
           'image': product['product_image_data'],
+          'id': product['id'],
+          'status': product['donated'],
         };
       }).toList();
     } else {
@@ -125,8 +127,11 @@ class _DonationListWidgetState extends State<DonationListWidget> {
     final String newStatus =
         donation['donated'] == 'In progress' ? 'Complete' : 'In progress';
 
-    await http.put(Uri.parse('${ApiConstants.BASE_URL}/product?userId=$userId'),
-        body: {'donated': newStatus});
+    await http.put(
+      Uri.parse(
+          '${ApiConstants.BASE_URL}/user/$userId/product/${donation['id']}/donated'),
+      // body: {'donated': !donation['status']}
+    );
     setState(() {
       donation['donated'] = newStatus;
     });
