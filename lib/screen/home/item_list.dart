@@ -25,13 +25,13 @@ class _ItemListState extends State<ItemList> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             height: 36,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  buildCategoryButton('All'), // Add a button for All category
+                  buildCategoryButton('All'),
                   buildCategoryButton('Utensils'),
                   buildCategoryButton('Furniture'),
                   buildCategoryButton('Electronics'),

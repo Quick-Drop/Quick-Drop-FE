@@ -30,8 +30,12 @@ class AiUploadScreen extends StatefulWidget {
 
 class _AiUploadScreenState extends State<AiUploadScreen> {
   String categoryText = '';
+  bool isLoading = false;
 
   Future<void> _uploadImageAndSetCategory() async {
+    setState(() {
+      isLoading = true; // Show loading indicator
+    });
     try {
       String categoryText =
           await UploadApi.uploadImageAndGetCategory(widget.image);
@@ -46,9 +50,14 @@ class _AiUploadScreenState extends State<AiUploadScreen> {
           categoryText.trim(); // Remove leading and trailing whitespace
       setState(() {
         this.categoryText = categoryText; // Update category text field
+        isLoading = false; // Hide loading indicator
       });
     } catch (e) {
+      setState(() {
+        isLoading = false; // Hide loading indicator
+      });
       print('Error uploading image and getting category: $e');
+      // Handle error here, such as displaying an error message to the user
     }
   }
 
@@ -110,21 +119,34 @@ class _AiUploadScreenState extends State<AiUploadScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
-                            child: Text(
-                              categoryText,
-                              style: const TextStyle(
-                                color: Color(0xFF54408C),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
+                            child: isLoading
+                                ? Text(
+                                    "Ai is working!",
+                                    style: TextStyle(
+                                        color: Color(0xFF54408C),
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  )
+                                : Text(
+                                    categoryText,
+                                    style: const TextStyle(
+                                      color: Color(0xFF54408C),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [const Text('Category'), Text(categoryText)],
+                      children: [
+                        const Text('Category'),
+                        isLoading
+                            ? Text("Will be updated by AI")
+                            : Text(categoryText)
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
