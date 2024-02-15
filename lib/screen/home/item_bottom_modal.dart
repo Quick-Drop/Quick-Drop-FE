@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../../services/api_constants.dart';
 import '../../services/product_list_api.dart';
 
 class ItemBottomModal extends StatefulWidget {
@@ -15,8 +17,19 @@ class ItemBottomModal extends StatefulWidget {
 
 class _ItemBottomModalState extends State<ItemBottomModal> {
   final ProductInfo productInfo;
-
   _ItemBottomModalState(this.productInfo);
+
+  Future<Map<String, dynamic>> fetchUserInfo(int userId) async {
+    final response = await http.get(
+      Uri.parse('${ApiConstants.BASE_URL}/user/$userId/profile'),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load user info');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +37,9 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
       children: [
         _buildImageSection(productInfo.product_image_data),
         _buildDetailSection(),
+        const SizedBox(
+          height: 30,
+        ),
         _buildButtonSection(),
       ],
     );
@@ -85,14 +101,30 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
             ),
           ),
           const SizedBox(height: 30),
-          Text(
-            productInfo.category,
-            style: const TextStyle(
-              color: Color(0xFFA5A5A5),
-              fontSize: 14,
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w400,
-            ),
+          FutureBuilder<Map<String, dynamic>>(
+            future: fetchUserInfo(productInfo.user_id),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasData) {
+                final address = snapshot.data!['address']
+                    .split(',')
+                    .sublist(0, 4)
+                    .join(', ');
+                return Text(
+                  address,
+                  style: const TextStyle(
+                    color: Color(0xFFA5A5A5),
+                    fontSize: 14,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w400,
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('Error loading donor info'));
+              }
+              return Container();
+            },
           ),
           const SizedBox(height: 30),
           _buildDonatorInfo(),
@@ -102,25 +134,36 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
   }
 
   Widget _buildDonatorInfo() {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Padding(
-          padding: EdgeInsets.all(16.0),
-          child: SizedBox(
-            height: 75,
-            width: 75,
-            child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.black),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 180,
-          child:
-              Text("Information or Introduction of the donator or contributor"),
-        )
-      ],
+    return FutureBuilder<Map<String, dynamic>>(
+      future: fetchUserInfo(productInfo.user_id),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(
+                height: 70,
+                width: 70,
+                child: FadeInImage.assetNetwork(
+                  placeholder: 'assets/images/user_default.png.',
+                  image: snapshot.data!['profile_image_url'] ??
+                      'assets/images/user_default.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${snapshot.data!['name']}'),
+                ],
+              ),
+            ],
+          ); // 예제로 사용자의 이름을 표시합니다.
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return const CircularProgressIndicator(); // 데이터를 기다리는 동안 로딩 표시
+      },
     );
   }
 

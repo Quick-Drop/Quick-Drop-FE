@@ -9,6 +9,7 @@ class ProductInfo with ChangeNotifier {
   final String title;
   final String description;
   final String product_image_data;
+  final int user_id;
 
   ProductInfo({
     required this.id,
@@ -16,6 +17,7 @@ class ProductInfo with ChangeNotifier {
     required this.title,
     required this.description,
     required this.product_image_data,
+    required this.user_id,
   });
 
   factory ProductInfo.fromJson(Map<String, dynamic> json) {
@@ -31,17 +33,27 @@ class ProductInfo with ChangeNotifier {
       title: json["title"],
       description: json["description"],
       product_image_data: json["product_image_data"],
+      user_id: json["user_id"],
     );
   }
 }
 
 class ItemListApi with ChangeNotifier {
-  static Future<List<ProductInfo>> fetchData() async {
+  static Future<List<ProductInfo>> fetchData({String? category}) async {
+    final Uri uri = Uri.parse('${ApiConstants.BASE_URL}/product');
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+    final Map<String, String> queryParams = {};
+
+    if (category != null) {
+      queryParams['category'] = category;
+    }
+
+    final Uri modifiedUri = uri.replace(queryParameters: queryParams);
     final response = await http.get(
-      Uri.parse('${ApiConstants.BASE_URL}/product'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      modifiedUri,
+      headers: headers,
     );
 
     if (response.statusCode == 200) {
