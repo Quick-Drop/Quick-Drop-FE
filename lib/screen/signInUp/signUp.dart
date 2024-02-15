@@ -95,116 +95,119 @@ class _SignUpState extends State<SignUp> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Sign Up',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Create your own account!',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Create your own account!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  _buildTextField(
-                    label: 'Name',
-                    controllerInstance: _nameController,
-                    validator: _validateName,
-                  ),
-                  _buildTextField(
-                      label: 'Email',
-                      controllerInstance: _emailController,
-                      validator: _validateEmail),
-                  _buildTextField(
-                    label: 'Password',
-                    isPassword: true,
-                    icon_suf: Icons.visibility_off_outlined,
-                    controllerInstance: _passwordController,
-                    validator: _validatePassword,
-                  ),
-                  const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(color: Color(0xff54408C)),
+                    const SizedBox(height: 24),
+                    _buildTextField(
+                      label: 'Name',
+                      controllerInstance: _nameController,
+                      validator: _validateName,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    // Call the API
-                    http.Response response = await createUser();
-                    if (response.statusCode == 200) {
-                      var data = jsonDecode(response.body);
-                      if (data['status'] == 'success') {
-                        if (mounted) {
-                          // mounted : 현재 위젯이 위젯 트리에 있는지 검사
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SuccessScreen(),
-                            ),
-                            (route) => false,
-                          );
+                    _buildTextField(
+                        label: 'Email',
+                        controllerInstance: _emailController,
+                        validator: _validateEmail),
+                    _buildTextField(
+                      label: 'Password',
+                      isPassword: true,
+                      icon_suf: Icons.visibility_off_outlined,
+                      controllerInstance: _passwordController,
+                      validator: _validatePassword,
+                    ),
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: Color(0xff54408C)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      // Call the API
+                      http.Response response = await createUser();
+                      if (response.statusCode == 200) {
+                        var data = jsonDecode(response.body);
+                        if (data['status'] == 'success') {
+                          if (mounted) {
+                            // mounted : 현재 위젯이 위젯 트리에 있는지 검사
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SuccessScreen(),
+                              ),
+                              (route) => false,
+                            );
+                          }
+                        } else {
+                          _showErrorDialog(context,
+                              'Registration failed, please try again.');
                         }
                       } else {
-                        _showErrorDialog(
-                            context, 'Registration failed, please try again.');
+                        _showErrorDialog(context,
+                            'Error code: ${response.statusCode}. Please try again.');
                       }
                     } else {
-                      _showErrorDialog(context,
-                          'Error code: ${response.statusCode}. Please try again.');
+                      // validation 실패시, _validatePassword의 실패 문자열 자동 update and display to UI
                     }
-                  } else {
-                    // validation 실패시, _validatePassword의 실패 문자열 자동 update and display to UI
-                  }
-                },
-                child: const Text('Register'),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Have an account?",
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignIn()),
-                      );
-                    },
-                    child: const Text(
-                      "Sign In",
-                      style: TextStyle(color: Color(0xff54408C)),
+                  },
+                  child: const Text('Register'),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Have an account?",
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
                     ),
-                  )
-                ],
-              ),
-              const Divider(),
-              const SizedBox(height: 24),
-            ],
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignIn()),
+                        );
+                      },
+                      child: const Text(
+                        "Sign In",
+                        style: TextStyle(color: Color(0xff54408C)),
+                      ),
+                    )
+                  ],
+                ),
+                const Divider(),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),
