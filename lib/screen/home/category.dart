@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:quick_drop/screen/home/item_bottom_modal.dart';
 import '../../services/product_list_api.dart'; // Import your product list API
 
-class Category extends StatelessWidget {
+class Category extends StatefulWidget {
   const Category({Key? key}) : super(key: key);
 
+  @override
+  State<Category> createState() => _CategoryState();
+}
+
+class _CategoryState extends State<Category> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +49,28 @@ class Category extends StatelessWidget {
                           return ListTile(
                             title: Text(product.title),
                             subtitle: Text(product.description),
+                            onTap: () {
+                              showModalBottomSheet<void>(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (context) {
+                                  return Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(25.0),
+                                        topRight: Radius.circular(25.0),
+                                      ),
+                                    ),
+                                    height: MediaQuery.of(context).size.height *
+                                        0.8,
+                                    child:
+                                        ItemBottomModal(productInfo: product),
+                                  );
+                                },
+                              );
+                            },
                           );
                         }).toList()
                       : [Text('No items in this category')],
