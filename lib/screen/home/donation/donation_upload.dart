@@ -6,7 +6,7 @@ import '../../../services/upload_post_api.dart';
 import '../home.dart';
 import 'image_input.dart';
 import 'donation_ai_upload.dart';
-import '../search.dart';
+import '../search/search.dart';
 
 class DonationUpload extends StatefulWidget {
   const DonationUpload({super.key});
@@ -252,7 +252,7 @@ class _DonationUploadState extends State<DonationUpload> {
                                     fontWeight: FontWeight.bold),
                               ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       SizedBox(

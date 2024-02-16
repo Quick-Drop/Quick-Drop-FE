@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:quick_drop/services/api_constants.dart';
 
-class ProductInfo with ChangeNotifier {
+class ProductInfo {
   final int id;
   final String category;
   final String title;
@@ -39,7 +39,8 @@ class ProductInfo with ChangeNotifier {
 }
 
 class ItemListApi with ChangeNotifier {
-  static Future<List<ProductInfo>> fetchData({String? category}) async {
+  static Future<List<ProductInfo>> fetchData(
+      {String? category, String? searchKeyword}) async {
     final Uri uri = Uri.parse('${ApiConstants.BASE_URL}/product');
     final Map<String, String> headers = {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -48,6 +49,10 @@ class ItemListApi with ChangeNotifier {
 
     if (category != null) {
       queryParams['category'] = category;
+    }
+
+    if (searchKeyword != null) {
+      queryParams['search'] = searchKeyword;
     }
 
     final Uri modifiedUri = uri.replace(queryParameters: queryParams);

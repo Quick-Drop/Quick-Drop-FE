@@ -73,7 +73,7 @@ class _CategoryState extends State<Category> {
                             },
                           );
                         }).toList()
-                      : [Text('No items in this category')],
+                      : [const Text('No items in this category')],
                 );
               },
             );
