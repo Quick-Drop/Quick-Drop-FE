@@ -6,7 +6,7 @@ import '../../../services/upload_post_api.dart';
 import '../home.dart';
 import 'image_input.dart';
 import 'donation_ai_upload.dart';
-import '../search.dart';
+import '../search/search.dart';
 
 class DonationUpload extends StatefulWidget {
   const DonationUpload({super.key});
@@ -239,7 +239,7 @@ class _DonationUploadState extends State<DonationUpload> {
                                 controller: productInfo['Product Title']
                                     ['controller'],
                                 decoration: const InputDecoration(
-                                  hintText: "Ex.AirPod 2th Gen",
+                                  hintText: "Write Product's name",
                                   hintStyle:
                                       TextStyle(fontWeight: FontWeight.bold),
                                   border: InputBorder.none,
@@ -252,9 +252,12 @@ class _DonationUploadState extends State<DonationUpload> {
                                     fontWeight: FontWeight.bold),
                               ),
                       ),
+                      const SizedBox(
+                        height: 8,
+                      ),
                       SizedBox(
                         width: 212,
-                        height: 80,
+                        height: 72,
                         child: productInfo['Product description']['isEditing']
                             ? TextFormField(
                                 key: const ValueKey(2),
@@ -263,7 +266,7 @@ class _DonationUploadState extends State<DonationUpload> {
                                     ['controller'],
                                 decoration: const InputDecoration(
                                   hintText:
-                                      "This is small book stand blah made in Republic of Korea blah",
+                                      "Detailed explanations are more helpful to the recipient",
                                   hintStyle: TextStyle(
                                       fontSize: 14,
                                       overflow: TextOverflow.visible),
@@ -418,7 +421,7 @@ class _DonationUploadState extends State<DonationUpload> {
                                   ),
                                 ),
                                 height:
-                                    MediaQuery.of(context).size.height * 0.88,
+                                    MediaQuery.of(context).size.height * 0.90,
                                 child: AiUploadScreen(
                                   productTitle: productInfo['Product Title']
                                           ['controller']
@@ -465,7 +468,61 @@ class _DonationUploadState extends State<DonationUpload> {
                 alignment: Alignment.bottomLeft,
                 child: TextButton.icon(
                   onPressed: () {
-                    // See more Details
+                    bool anyEmpty = productInfo['Product Title']['controller']
+                            .text
+                            .isEmpty ||
+                        productInfo['Product description']['controller']
+                            .text
+                            .isEmpty ||
+                        brandNameController.text.isEmpty ||
+                        colorController.text.isEmpty ||
+                        categoryController.text.isEmpty ||
+                        _pickedImage == null;
+
+                    if (anyEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Please fill in all fields')),
+                      );
+                    } else {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) {
+                          return Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(25.0),
+                                topRight: Radius.circular(25.0),
+                              ),
+                            ),
+                            height: MediaQuery.of(context).size.height * 0.88,
+                            child: AiUploadScreen(
+                              productTitle: productInfo['Product Title']
+                                      ['controller']
+                                  .text,
+                              productDescription:
+                                  productInfo['Product description']
+                                          ['controller']
+                                      .text,
+                              brandName: brandNameController.text,
+                              dateOfManufacture: dateOfManufacture,
+                              color: colorController.text,
+                              category: categoryController.text,
+                              image: _pickedImage!,
+                              onSave: (categoryText) {
+                                setState(() {
+                                  categoryController.text = categoryText;
+                                });
+                                Navigator.pop(context, categoryText);
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    }
                   },
                   label: const Text('See more Details'),
                   icon: const Icon(Icons.chevron_right),
