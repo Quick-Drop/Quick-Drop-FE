@@ -33,15 +33,17 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildImageSection(productInfo.product_image_data),
-        _buildDetailSection(),
-        const SizedBox(
-          height: 30,
-        ),
-        _buildButtonSection(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildImageSection(productInfo.product_image_data),
+          _buildDetailSection(),
+          const SizedBox(
+            height: 30,
+          ),
+          _buildButtonSection(),
+        ],
+      ),
     );
   }
 

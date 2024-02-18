@@ -39,7 +39,7 @@ class _AiUploadScreenState extends State<AiUploadScreen> {
       });
     }
     try {
-      String categoryText =
+      String? categoryText =
           await UploadApi.uploadImageAndGetCategory(widget.image);
       // Extract 'Utensil' from the result string
       if (categoryText.contains(':')) {
@@ -50,12 +50,13 @@ class _AiUploadScreenState extends State<AiUploadScreen> {
           RegExp(r'[^\w\s]'), ''); // Remove non-word characters
       categoryText =
           categoryText.trim(); // Remove leading and trailing whitespace
-      if (mounted) {
-        setState(() {
+
+      setState(() {
+        if (categoryText != null) {
           this.categoryText = categoryText; // Update category text field
-          isLoading = false; // Hide loading indicator
-        });
-      }
+          isLoading = false;
+        }
+      });
     } catch (e) {
       if (mounted) {
         setState(() {
