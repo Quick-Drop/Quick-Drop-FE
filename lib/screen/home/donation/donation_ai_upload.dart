@@ -33,9 +33,11 @@ class _AiUploadScreenState extends State<AiUploadScreen> {
   bool isLoading = false;
 
   Future<void> _uploadImageAndSetCategory() async {
-    setState(() {
-      isLoading = true; // Show loading indicator
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = true; // Show loading indicator
+      });
+    }
     try {
       String categoryText =
           await UploadApi.uploadImageAndGetCategory(widget.image);
@@ -48,14 +50,19 @@ class _AiUploadScreenState extends State<AiUploadScreen> {
           RegExp(r'[^\w\s]'), ''); // Remove non-word characters
       categoryText =
           categoryText.trim(); // Remove leading and trailing whitespace
-      setState(() {
-        this.categoryText = categoryText; // Update category text field
-        isLoading = false; // Hide loading indicator
-      });
+      if (mounted) {
+        setState(() {
+          this.categoryText = categoryText; // Update category text field
+          isLoading = false; // Hide loading indicator
+        });
+      }
     } catch (e) {
-      setState(() {
-        isLoading = false; // Hide loading indicator
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false; // Hide loading indicator
+        });
+      }
+
       print('Error uploading image and getting category: $e');
       // Handle error here, such as displaying an error message to the user
     }
@@ -69,9 +76,7 @@ class _AiUploadScreenState extends State<AiUploadScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
-    _uploadImageAndSetCategory();
   }
 
   @override
