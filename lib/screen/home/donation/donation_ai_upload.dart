@@ -68,6 +68,13 @@ class _AiUploadScreenState extends State<AiUploadScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _uploadImageAndSetCategory();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Center(

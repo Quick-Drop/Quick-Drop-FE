@@ -31,7 +31,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 delegate: ProductSearchDelegate(),
               ).then((productInfo) {
                 if (productInfo != null) {
-                  // 검색 결과를 선택한 경우에 대한 처리를 여기에 작성합니다.
+                  Center(
+                    child: Text("No matching results, please double check"),
+                  );
                 }
               });
             },
