@@ -144,10 +144,8 @@ class _ItemBottomModalState extends State<ItemBottomModal> {
               SizedBox(
                 height: 70,
                 width: 70,
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/images/user_default.png.',
-                  image: snapshot.data!['profile_image_url'] ??
-                      'assets/images/user_default.png',
+                child: Image.asset(
+                  'assets/images/user_default.png',
                   fit: BoxFit.cover,
                 ),
               ),
