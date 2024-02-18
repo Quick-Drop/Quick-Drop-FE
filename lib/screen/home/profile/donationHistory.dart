@@ -33,7 +33,7 @@ class _DonationHistoryState extends State<DonationHistory>
       List<dynamic> products = jsonDecode(response.body);
       return products.map<Map<String, dynamic>>((product) {
         return {
-          'title': product['description'],
+          'title': product['title'],
           'donated': product['donated'] ? 'Complete' : 'In progress',
           'image': product['product_image_data'],
           'id': product['id'],
