@@ -77,13 +77,19 @@ class _DonationUploadState extends State<DonationUpload> {
   // AI 라벨링 데이터 GET 함수
   void _uploadImageAndGetCategory() async {
     try {
-      String category =
-          await UploadApi.uploadImageAndGetCategory(_pickedImage!);
-      setState(() {
-        categoryText = category;
-        categoryController.text =
-            categoryText; // Set the categoryController text
-      });
+      if (_pickedImage != null) {
+        // Utilized the await keyword to asynchronously fetch the category
+        String category =
+            await UploadApi.uploadImageAndGetCategory(_pickedImage!);
+        setState(() {
+          categoryText = category;
+          categoryController.text =
+              categoryText; // Set the categoryController text
+        });
+      } else {
+        print('Error: _pickedImage is null');
+        // Handle the null case here, such as displaying an error message
+      }
     } catch (e) {
       print('Error uploading image and getting category: $e');
     }
