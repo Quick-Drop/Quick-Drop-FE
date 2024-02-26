@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quick_drop/services/api_constants.dart';
 
 class ProductInfo {
@@ -38,35 +39,38 @@ class ProductInfo {
   }
 }
 
-class ItemListApi with ChangeNotifier {
-  static Future<List<ProductInfo>> fetchData(
-      {String? category, String? searchKeyword}) async {
-    final Uri uri = Uri.parse('${ApiConstants.BASE_URL}/product');
-    final Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-    };
-    final Map<String, String> queryParams = {};
+final itemListProvider =
+    FutureProvider.autoDispose<List<ProductInfo>>((ref) async {
+  return await fetchData();
+});
 
-    if (category != null) {
-      queryParams['category'] = category;
-    }
+Future<List<ProductInfo>> fetchData(
+    {String? category, String? searchKeyword}) async {
+  final Uri uri = Uri.parse('${ApiConstants.BASE_URL}/product');
+  final Map<String, String> headers = {
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+  final Map<String, String> queryParams = {};
 
-    if (searchKeyword != null) {
-      queryParams['search'] = searchKeyword;
-    }
+  if (category != null) {
+    queryParams['category'] = category;
+  }
 
-    final Uri modifiedUri = uri.replace(queryParameters: queryParams);
-    final response = await http.get(
-      modifiedUri,
-      headers: headers,
-    );
+  if (searchKeyword != null) {
+    queryParams['search'] = searchKeyword;
+  }
 
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.body);
-      return jsonData.map((item) => ProductInfo.fromJson(item)).toList();
-    } else {
-      print(response.statusCode);
-      throw Exception('Failed to load Item List');
-    }
+  final Uri modifiedUri = uri.replace(queryParameters: queryParams);
+  final response = await http.get(
+    modifiedUri,
+    headers: headers,
+  );
+
+  if (response.statusCode == 200) {
+    final List<dynamic> jsonData = jsonDecode(response.body);
+    return jsonData.map((item) => ProductInfo.fromJson(item)).toList();
+  } else {
+    print(response.statusCode);
+    throw Exception('Failed to load Item List');
   }
 }

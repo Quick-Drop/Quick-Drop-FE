@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
-import 'item_bottom_modal.dart';
-import '../../services/product_list_api.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quick_drop/screen/home/item_bottom_modal.dart';
+import 'package:quick_drop/services/product_list_api.dart';
 
-class ItemList extends StatefulWidget {
+final selectedCategoryProvider = StateProvider<String>((ref) => '');
+
+final itemListProvider = FutureProvider.autoDispose<List<ProductInfo>>((ref) {
+  final category = ref.watch(selectedCategoryProvider);
+  return fetchData(
+      category: category); // Replace with your actual fetchData function
+});
+
+class ItemList extends ConsumerStatefulWidget {
   const ItemList({Key? key}) : super(key: key);
 
   @override
-  State<ItemList> createState() => _ItemListState();
+  _ItemListState createState() => _ItemListState();
 }
 
-class _ItemListState extends State<ItemList> {
-  late Future<List<ProductInfo>> _productInfoList;
-  String _selectedCategory = ''; // Track the selected category
-
-  @override
-  void initState() {
-    super.initState();
-    _productInfoList = ItemListApi.fetchData();
-  }
-
+class _ItemListState extends ConsumerState<ItemList> {
   @override
   Widget build(BuildContext context) {
+    final productInfoList = ref.watch(itemListProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
+
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,66 +49,50 @@ class _ItemListState extends State<ItemList> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<ProductInfo>>(
-              future: _productInfoList,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return const Center(
-                    child: Text('Something went wrong'),
-                  );
-                } else {
-                  final List<ProductInfo> productInfoList = snapshot.data!;
-                  // Filter the list based on selected category
-                  final filteredList = _selectedCategory.isEmpty
-                      ? productInfoList
-                      : productInfoList
-                          .where((item) =>
-                              item.category == _selectedCategory ||
-                              _selectedCategory ==
-                                  'All') // Include 'All' category
-                          .toList();
-                  return ListView.builder(
-                    itemCount: filteredList.length,
-                    itemBuilder: (context, index) {
-                      final productInfo = filteredList[index];
-                      return InkWell(
-                        onTap: () {
-                          showModalBottomSheet<void>(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) {
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(25.0),
-                                    topRight: Radius.circular(25.0),
-                                  ),
+            child: productInfoList.when(
+              data: (productInfoList) {
+                return ListView.builder(
+                  itemCount: productInfoList.length,
+                  itemBuilder: (context, index) {
+                    final productInfo = productInfoList[index];
+                    return InkWell(
+                      onTap: () {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) {
+                            return Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(25.0),
+                                  topRight: Radius.circular(25.0),
                                 ),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.77,
-                                child:
-                                    ItemBottomModal(productInfo: productInfo),
-                              );
-                            },
-                          );
-                        },
-                        child: ListTile(
-                          title: Text(productInfo.title),
-                          subtitle: Text(productInfo.category),
-                          trailing: const Icon(Icons.arrow_forward),
-                        ),
-                      );
-                    },
-                  );
-                }
+                              ),
+                              height: MediaQuery.of(context).size.height * 0.77,
+                              child: ItemBottomModal(
+                                  productInfo:
+                                      productInfo), // Replace with your actual ItemBottomModal widget
+                            );
+                          },
+                        );
+                      },
+                      child: ListTile(
+                        title: Text(productInfo.title),
+                        subtitle: Text(productInfo.category),
+                        trailing: const Icon(Icons.arrow_forward),
+                      ),
+                    );
+                  },
+                );
               },
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              error: (_, __) => const Center(
+                child: Text('Something went wrong'),
+              ),
             ),
           ),
         ],
@@ -114,17 +101,18 @@ class _ItemListState extends State<ItemList> {
   }
 
   Widget buildCategoryButton(String category) {
+    final selectedCategory = ref.watch(selectedCategoryProvider);
     return TextButton(
       onPressed: () {
-        setState(() {
-          _selectedCategory = category; // Update the selected category
-        });
+        ref.watch(selectedCategoryProvider.notifier).state = category;
+        ref.watch(itemListProvider);
       },
       child: Text(
         category,
         style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: _selectedCategory == category ? Colors.black : Colors.grey),
+          fontWeight: FontWeight.normal,
+          color: selectedCategory == category ? Colors.black : Colors.grey,
+        ),
       ),
     );
   }

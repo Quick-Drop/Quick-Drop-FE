@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:quick_drop/screen/home/item_bottom_modal.dart';
 import '../../services/product_list_api.dart'; // Import your product list API
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Category extends StatefulWidget {
+class Category extends ConsumerWidget {
   const Category({Key? key}) : super(key: key);
 
   @override
-  State<Category> createState() => _CategoryState();
-}
-
-class _CategoryState extends State<Category> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: FutureBuilder<List<ProductInfo>>(
-        future: ItemListApi.fetchData(),
+        future: ref.watch(itemListProvider.future),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(

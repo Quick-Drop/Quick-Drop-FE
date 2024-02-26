@@ -46,3 +46,6 @@ app.*.map.json
 # GoogleMap api (android, ios) hidden
 /android/local.properties
 /ios/Runner/Storage.swift
+
+# API
+lib/services/api_constants.dart
